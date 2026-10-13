@@ -1,6 +1,6 @@
 # Minimal Domain Model
 
-状态：逻辑模型设计，未创建数据库、迁移脚本或 Repository。
+状态：V1 逻辑模型。notification_update 所需的五类记录已实现 SQLite 存储；其余对象仍为设计。当前使用新库建表，没有历史库升级迁移机制。
 
 ## 1. 边界与授权
 
@@ -60,3 +60,13 @@ V1 未承诺进程重启后恢复待确认任务；重启后必须重建并确�
 ## 6. 不新增的模型
 
 本阶段不增加完整 Tenant/Organization、Plan/Billing、审批链、任务管理、客服坐席、通知投递、通用工作流引擎或领域事件表。TaskContext、PendingAction、Confirmation 定义在对话契约中，不因有名字就建立数据库表。
+
+## 7. 当前物理实现
+
+`repositories/database.py` 显式建立 users、workspaces、memberships、notification_preferences、operation_receipts 五张表，并开启外键检查。三个具体 Repository 不自行提交，事务归 NotificationService 管理。
+
+User/Workspace/Membership 当前仅有必要数据库记录和只读授权查询，没有注册、管理或认证接口；Project/ProjectAccess/SupportTicket 未建表。PendingAction/Confirmation 是不可变 dataclass，只在 Workflow 实例中保留，完整 TaskContext 未实现。
+
+未存储偏好以 false/version=0 表达；首次真实改变时插入 version=1。对默认 false 再设置 false 属于无变更操作，只写操作回执，不物化偏好行。对已有记录更新通过 version 条件检查并递增；无变更不递增。
+
+回执 result_snapshot 保存执行当时的 old_enabled、enabled、previous_version、version、changed 及对象范围。后来合法修改设置不会重写旧回执，因此历史回执与当前查询值可以不同。失败回执可能不存在，但不能伪造成功回执。个人设置的改变不触发实际邮件发送。

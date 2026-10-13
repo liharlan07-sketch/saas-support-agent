@@ -1,6 +1,6 @@
 # Phase 1：Intent / Slots / Router Contract
 
-状态：设计契约，尚未实现。本文与领域模型、状态机、评测规格共同构成首版基线。
+状态：V1 设计契约。已实现 notification_update 的结构化执行子集；Intent/Slots/Router、完整 Memory 与 RAG 尚未接入。本文与领域模型、状态机、评测规格共同构成首版基线。
 
 ## 1. 固定顺序与信任边界
 
@@ -99,3 +99,14 @@ Lingyu → RAG：request_id、original_question、context_messages（限长投�
 | Router/Business Service/Repository/Action/Evaluation | 新增实现 | 当前不存在完整业务闭环 |
 
 迁移原则：阅读原实现 → 判断保留价值 → 明确接口 → 必要重构 → 小范围迁移 → 经授权验证。优先修低置信度 trace_id 缺失、用户隔离、密钥注入与导入冲突。BM25/MMR/Hybrid/RRF、Redis 和服务拆分不在 V1 范围。
+
+## 9. notification_update 实现边界（2026-10-13）
+
+- 当前入口为可信 Python 调用方提供的 `TrustedIdentity` 与 `NotificationUpdateRequest`；不做自然语言解析。身份不能由不受信文本或任意 HTTP 参数直接构造。
+- `prepare` 返回不可变 PendingAction 及完整摘要；调用方展示后，用明确的 `confirm(identity, pending_action_id, revision, payload_hash)` 事件确认。没有 UI，不声称系统能判断人是否实际阅读了摘要。
+- `Confirmation` 由 Workflow 根据保存的草稿绑定，增加 session_id 与 operation_id 的显式核对；不接受外部提供任意完整 PendingAction 来代替保存的草稿。
+- 确认有效期默认 10 分钟，构造参数可配置，使用可注入的 UTC 时钟。重新准备版本会重新展示，不能自动提交。
+- 当前结构化入口只接受真正的 bool；开/关同义词到 bool 的转换仍属于未来的语言输入适配层。
+- 当前 Workspace 由可信上下文指定，不解析名称。跨 Workspace 更换写操作需要先处理原操作；不跨范围自动继承确认。
+- 已实现一个待确认写操作、显式 revise/cancel、终态或不确定结果核对。未实现完整 TaskContext、Query 插入/恢复和自然语言任务切换。
+- 日志仅含请求/操作编号、阶段和结果，不输出原始业务内容或数据库异常消息。查询返回 branch=Query；执行返回 branch=Action。

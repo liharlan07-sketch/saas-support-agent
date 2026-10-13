@@ -1,6 +1,6 @@
 # 两个 Action State Machine
 
-状态：行为设计，未实现任何状态机、服务调用或数据库写入。
+状态：notification_update 已实现结构化输入、确认、Service 与 SQLite 执行；自然语言前置步骤、完整任务切换及 create_support_ticket 仍为设计。
 
 ## 1. 共用约束
 
@@ -84,3 +84,15 @@ collect_context → build_summary → user_review
 - 成功回执与实际业务结果一致。
 - 工单 waiting_for_agent 与操作 succeeded 同时成立，但意义不同。
 - Memory 不能作为授权来源或执行成功证明。
+
+## 7. notification_update 实现决策
+
+1. **事务边界**：Service 使用显式 BEGIN IMMEDIATE。当前授权 → 原回执查询 → 期限/业务版本校验 → 条件更新偏好 → 保存回执 → COMMIT。Repository 不提交；回执插入失败时偏好一起回滚。SQLite 锁等待有限，不执行无限重试。
+2. **确认版本**：冻结的草稿包含身份与会话、Workspace、类型/渠道/值、旧值/业务版本、摘要、期限、pending ID/revision/operation ID。稳定 JSON 摘要排除 workflow_state，包含其余确认内容；哈希是内容一致性检查，不是认证或签名。
+3. **重新校验**：事务内检查用户/空间/成员有效性，比较成员与 Workspace 版本，以及目标偏好快照。无权限直接拒绝；相关状态变化或过期时读回并返回新草稿，必须再次确认。其他通知单元的改变不使当前偏好确认失效。
+4. **幂等顺序**：先在当前授权范围核对原回执，再检查是否需要执行。相同 ID/内容返回原结果；不同内容冲突拒绝。成功操作过期后仍可查回执，不重复写入。新的相同目标操作使用新 ID，可得到 changed=false。
+5. **状态与恢复**：Workflow 内存只协调当前会话。已取消的操作不能执行；已经失败且确认未提交的操作不因缺失败回执变成未知；尚未执行的草稿调用 resolve 仍等待确认。结果不明时禁止 revise/cancel/新写，resolve 只查询，不重试。
+6. **异常核对**：已知回滚返回 failed，失败回执尽力另事务保存；提交可能成功但回复丢失时，先以原 ID 查询。如果授权暂时丢失或数据库不可用，不推断写入失败，保持待核对状态。恢复访问后可核对已提交回执。
+7. **运行限制**：单个 Workflow 实例串行推进状态，跨实例数据库竞争靠事务、版本和唯一约束控制。进程重启丢失草稿，不可继续旧确认；业务记录和回执仍可查询。当前未实现多进程共享会话、持久化待执行队列或自动补偿。
+
+公开 Python 使用路径是 Workflow.prepare/revise/confirm/cancel/resolve 与 Service.query_preference/query_receipt。Service.execute 是受信内部执行边界，不是可直接暴露给客户端的接口。当前结构化调用中的显式 confirm 代表用户确认事件，尚无界面或自然语言确认适配器。

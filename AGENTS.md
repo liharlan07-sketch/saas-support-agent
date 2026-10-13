@@ -2,7 +2,7 @@
 
 ## 阶段与范围
 
-当前仅完成 Phase 1 骨架与设计契约。没有业务功能实现；任何后续阶段均需用户明确授权。不得将文档中的目标能力描述为已实现。
+当前已完成 Phase 1 设计与 notification_update 确定性业务办理链路；自然语言、完整任务 Memory、工单与 RAG 尚未实现。任何后续阶段均需用户明确授权，不得将文档中的目标能力描述为已实现。
 
 - 原始参考工程 lingyu_chat / smart_reading 只读，不整体复制，不修改或删除。
 - 固定顺序：Trusted Identity Context → Load Memory → Intent/Slots/Confidence → Validation/Entity Resolution/Missing Slots → Deterministic Router → Branch Execution → Unified Result → Update Memory。
@@ -28,7 +28,37 @@
 
 ## 用户的代码所有权
 
-用户重点掌握 Intent/Slots/Router、notification_update、确认与幂等、Task Context Memory、RAG no-evidence/fallback 和评测标准。不要一次性实现整个系统。核心设计说明原因，分批交付；重复 CRUD、配置、UI 和测试骨架可由助手承担。
+采用用户于 2026-10-13 确认的“Vertical Slice 优先 + 里程碑复盘”。在已授权范围内持续实现、验证，不因每个新字段或工程术语暂停教学；不扩展为完整后端课程。用户重点掌握 Intent/Slots/Router、notification_update、确认与幂等、Task Context Memory、RAG no-evidence/fallback 和评测标准。
+
+改变 Phase 1 契约、业务范围、依赖、数据模型核心边界、Confirmation/Idempotency/Memory 语义或需要明显替代方案时，先说明问题和建议，必要时确认；普通文件拆分、helper 和字段命名自行处理。
+
+每个 Slice 以链路运行、自动化测试通过、真实数据库状态/回执可核对和失败不虚报成功为完成标准。完成后提供项目所有权交接：业务问题、8–15 行调用链、最多 2–3 个 P0/P1/P2 知识点、每个 P0 的问题/原因/方案/实现/失败例子/面试表达、3–5 个代码入口、测试证据与剩余边界。等待用户复盘后再进入下一 Slice。
+
+本地版本管理采用已授权的里程碑提交，阶段完成且验证通过后形成清晰 commit，不逐文件提交半成品。远程创建、remote 配置和 push 必须另行明确授权。
+
+## Code comments and documentation
+
+- Code identifiers, function names, variable names, class names, file names, and database field names must use English.
+- Comments and docstrings may use Chinese or English. Prefer concise Chinese for non-obvious business rules, design rationale, and failure cases when it improves clarity. Short technical notes may use either language; do not duplicate the same explanation in both languages.
+- README and project learning documents should primarily use Chinese for the intended audience. Git commit messages should remain concise, conventional English, such as `feat: ...` or `docs: ...`.
+- Prefer clear naming and small, focused functions over excessive comments. Do not add comments when naming or structure can make the code clearer.
+- Comments should explain why a design or business rule exists, rather than restating what the code does.
+- Add comments only where they provide real value, especially around business rules, tenant and permission boundaries, confirmation validity, revalidation, idempotency, state invalidation, fallback behavior, retry safety, and non-obvious failure handling.
+- Public or core service interfaces may use concise Chinese or English docstrings to describe their contract, important guarantees, and side effects.
+- Avoid line-by-line narration. For example, avoid:
+
+  ```python
+  # Get user.
+  user = get_user()
+  ```
+
+- Prefer explanations of the reason for a safeguard, such as:
+
+  ```python
+  # 执行写操作前重新校验当前状态，避免使用已经失效的用户确认。
+  ```
+
+- Do not add large tutorial-style explanations inside production code. Learning explanations belong in project documentation or review notes, not implementation files.
 
 ## 对外真实性
 
