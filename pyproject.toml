@@ -1,0 +1,9 @@
+[project]
+name = "saas-support-agent"
+version = "0.1.0"
+description = "Project collaboration SaaS support agent: architecture and contracts"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+# Phase 1: metadata only. Build backend and runnable entry points are deferred.

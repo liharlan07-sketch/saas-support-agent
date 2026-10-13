@@ -1,0 +1,38 @@
+# Credentials and local environments
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+
+# Python caches and generated artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Local runtime state, generated indexes and evaluation output
+runtime/
+chroma_db/
+outputs/
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+*.db
+*.db-*
+*.log
+
+# Editor and OS state
+.idea/
+.vscode/
+.DS_Store
+
+# Keep versioned knowledge, sample fixtures and evaluation annotations trackable.
+# Do not add blanket ignores for data/, tests/ or docs/.
