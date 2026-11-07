@@ -1,6 +1,6 @@
 # Evaluation Spec
 
-状态：V1 评测规格，notification_update 已有标准库自动化测试，执行记录见第 8 节。Intent、RAG、完整 Multi-turn 指标仍未评测；前文样例不自动等于已通过测试。
+状态：V1 评测规格，notification_update 和最小 Task Context 已有标准库自动化测试，执行记录见第 8–10 节。Intent、RAG、完整 Multi-turn 指标仍未评测；前文样例不自动等于已通过测试。
 
 ## 1. 评测组织
 
@@ -108,3 +108,38 @@ confidence 是模型自报分数，confidence=0.9 不代表 90% 正确率。未�
 实现首轮曾发现并修复两个状态问题：已知失败无回执被误转为结果未知；未执行草稿调用 resolve 被误转为结果未知。已加入对应回归用例。另对提交后丢失回复且权限被撤销的组合场景检查：不能把查询拒绝当作执行失败。
 
 边界：这是单机 SQLite 自动化验证，不是生产认证、真实邮件投递、操作系统断电/进程强杀验证、性能压测或分布式保证。模拟的响应丢失通过提交后注入异常实现，不声称经过真实 HTTP 网络。完整 TaskContext、自然语言路由、RAG 和工单评测尚未运行。
+
+
+## 9. uv 环境验证（2026-10-17）
+
+- 目的：沿用已确认方案，将运行方式统一为 uv + Python 3.14，不修改通知办理流程。
+- 环境：uv 0.12.17，uv 管理的 CPython 3.14.7，项目独立 `.venv`；无第三方依赖。
+- 执行者：Codex。用户确认版本和环境方案；本轮用户对新环境的独立验证尚待确认。此前用户已提供 Homebrew Python 下 42 项测试通过的终端输出，两次执行不混为同一次。
+- 实际命令：`PYTHONPATH=src uv --no-cache --offline run --locked python -B -m unittest discover -s tests -v`。`--no-cache --offline` 用于本次隔离验证，日常可使用 README 的命令。
+- 结果：42 项通过（28 项 Workflow、14 项 SQLite 事务），测试报告耗时 0.332 秒；该数字仅为本次测试耗时，不是业务性能指标。证据等级 Level 1。
+- 验证内容：沿用第 8 节断言，覆盖独立连接读回设置和回执、授权隔离、参数与确认失效、重复及竞争操作、写入回滚和结果不明核对。数据为临时文件型 SQLite 中的合成数据。
+- 真实环境问题：首次复用 Homebrew Python 3.14.6 时，uv 的解释器探测失败。进一步检查发现 `pyexpat` 加载系统 `libexpat` 时缺少 `_XML_SetAllocTrackerActivationThreshold` 符号，导致 `plistlib` 无法导入、`platform.mac_ver()` 返回空。没有修改全局 Homebrew 或业务代码；改用 uv 管理的独立解释器后完成建环境和测试。未修复全局解释器，也未为外部解释器故障添加项目回归测试。
+- 取舍：保留源目录运行方式和 `PYTHONPATH=src`，不新增构建后端、不安装项目包。`.python-version` 固定 3.14 系列，不固定补丁版；此处记录实际验证的补丁版本。
+- 边界：仅验证当前业务代码；LLM/RAG/Milvus 依赖、编辑器实际运行配置和生产部署未验证。未提交 Git。
+
+
+## 10. Task Context 执行记录（2026-10-17）
+
+- 执行者：Codex；uv 0.12.17 / CPython 3.14.7 / 项目独立环境。基于 Git HEAD `7722ffa` 的未提交工作区增量，不将 HEAD 描述为本次完整实现版本。
+- 实际命令：`PYTHONPATH=src uv --no-cache --offline run --locked python -B -m unittest discover -s tests -v`。
+- 结果：71 项全部通过，原 Workflow 28 项、原 SQLite 事务 14 项、本轮 Task Context 29 项。原有两个测试文件及原执行/确认实现未修改。Level 1：本地测试运行，合成身份和业务数据、临时文件型 SQLite。
+- Level 3：下表是测试支持的有限能力结论，不是生产成功率或自然语言 Memory 指标。Level 2 模型 Evaluation 本轮无；语言解析/指代消解仍是 Level 4 目标。
+
+| 场景 | 实际检查 |
+| --- | --- |
+| 补参及修改 | 同任务补齐参数，不提前写数据库；prepare 后 Store 不保存参数副本；revise 更新版本，旧确认不写入 |
+| 生命周期 | 取消/成功/已知失败后不继承旧 Slots；旧 task_id 事件不能改变新任务；非法修改整体拒绝 |
+| Scope | user/workspace/session 隔离；无权限缺参任务不建立；同用户会话跨空间不能覆盖已有写任务 |
+| Query/Resume | 查询成功/失败不覆盖草稿；显式恢复不执行；期限、成员版本、目标偏好变化重新展示，撤权拒绝 |
+| 状态保留 | 临时数据库读失败保留草稿；结果未知时禁止 cleanup/cancel/revise/新写，恢复权限后核对原回执 |
+| 真实数据库与回执 | 成功路径有对应偏好和成功回执，重复确认仍为 1 条偏好/1 条回执；回执写失败全部回滚 |
+| 重启与并发 | 重建 Manager/Workflow 丢失未确认任务且不执行；已成功回执仍可查询；两个线程 start 仅一个建立任务 |
+
+真实发现并修复：首轮 69 项有 1 项失败，`test_lost_workflow_invalidates_task_without_reconstructing_action` 中，失效任务 cleanup 错误返回 needs_clarification。根因是清理复用了拒绝失效任务的执行前置检查。修复为仅 cleanup 允许访问同 scope、同 task_id 的失效终态，活跃任务检查保持不变。保留原失败测试，并增加撤权后失效清理（含跨 scope/错误 ID 拒绝）与未确认任务重启测试，最终 71 项通过。
+
+提交后响应丢失/撤权、数据库不可用及回执写入失败为主动故障注入，不是生产事故。重启通过重建实例模拟，并非进程强杀或断电实验。两个线程 start 仅证明本实例锁内守卫，不证明吞吐量、多 worker 或分布式一致性。

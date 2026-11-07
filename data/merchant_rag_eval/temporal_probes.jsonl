@@ -1,0 +1,12 @@
+{"query":"已经签收八天，超过七天退货期限了，还能申请人工复核吗？","evidence":["returns:2.0:2"],"group":"explicit_overdue"}
+{"query":"收到货八天了，现在想退货应该怎么办？","evidence":["returns:2.0:2"],"group":"implicit_overdue"}
+{"query":"签收第九天才提出退货，是否可以登记人工核对？","evidence":["returns:2.0:2"],"group":"implicit_overdue"}
+{"query":"签收十天错过退货期限，需要哪些人工审核材料？","evidence":["returns:2.0:2"],"group":"explicit_overdue"}
+{"query":"示例商家的退货申请期限是不是签收后七天？","evidence":["returns:2.0:1"],"group":"window_counterexample"}
+{"query":"收货第二天想申请退货，示例申请期限如何计算？","evidence":["returns:2.0:1"],"group":"window_counterexample"}
+{"query":"下单八天还没签收，怀疑包裹丢失，应先查什么？","evidence":["returns:2.0:3"],"group":"shipping_counterexample"}
+{"query":"快递在路上九天了还未收货，如何登记物流异常？","evidence":["returns:2.0:3"],"group":"shipping_counterexample"}
+{"query":"今天刚签收，打开包装发现碎了，要拍哪些照片？","evidence":["returns:2.0:4"],"group":"damage_counterexample"}
+{"query":"签收第二天发现商品外壳破损，如何提供核验材料？","evidence":["returns:2.0:4"],"group":"damage_counterexample"}
+{"query":"超过退货期限，同时丢了签收凭证，能提供哪些替代材料并申请复核？","evidence":["returns:2.0:2","returns:2.0:8"],"group":"multiple_evidence"}
+{"query":"工单等了八天还是待人工受理，是否代表已退款？","evidence":["returns:2.0:9"],"group":"status_counterexample"}

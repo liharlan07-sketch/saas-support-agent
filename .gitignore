@@ -36,3 +36,9 @@ outputs/
 
 # Keep versioned knowledge, sample fixtures and evaluation annotations trackable.
 # Do not add blanket ignores for data/, tests/ or docs/.
+
+# Model weights must be fetched separately, never committed.
+*.onnx
+*.safetensors
+*.pt
+*.pth

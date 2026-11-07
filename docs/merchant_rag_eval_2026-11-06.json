@@ -1,0 +1,99 @@
+{
+  "queries": 24,
+  "index_chunks": 17,
+  "models_load_s": 1.574,
+  "retrieval": {
+    "dense": {
+      "recall_at_5": 0.9167,
+      "hit_at_1": 21,
+      "p50_ms": 5.84,
+      "p95_ms": 6.5,
+      "misses_at_1": [
+        {
+          "question": "签收都八天了，还能让客服看一下吗？",
+          "first": "returns:2.0:1"
+        },
+        {
+          "question": "错过售后申请窗口，需要提交什么来人工复查？",
+          "first": "returns:2.0:10"
+        },
+        {
+          "question": "下单大号却送了小号，提供什么信息给客服？",
+          "first": "returns:2.0:10"
+        }
+      ]
+    },
+    "hybrid": {
+      "recall_at_5": 0.9167,
+      "hit_at_1": 22,
+      "p50_ms": 6.38,
+      "p95_ms": 6.94,
+      "misses_at_1": [
+        {
+          "question": "签收都八天了，还能让客服看一下吗？",
+          "first": "returns:2.0:1"
+        },
+        {
+          "question": "下单大号却送了小号，提供什么信息给客服？",
+          "first": "returns:2.0:6"
+        }
+      ]
+    },
+    "rerank": {
+      "recall_at_5": 1.0,
+      "hit_at_1": 23,
+      "p50_ms": 684.81,
+      "p95_ms": 782.4,
+      "misses_at_1": [
+        {
+          "question": "签收都八天了，还能让客服看一下吗？",
+          "first": "returns:2.0:4"
+        }
+      ]
+    }
+  },
+  "rerank_candidate_profile_p50_ms": {
+    "3": 207.86,
+    "5": 338.08,
+    "10": 696.13
+  },
+  "boundary_checks": [
+    {
+      "question": "咨询火星天气预报？",
+      "expected": "no_evidence",
+      "actual": "no_evidence",
+      "source_ids": []
+    },
+    {
+      "question": "咨询公司股票股息税率？",
+      "expected": "no_evidence",
+      "actual": "no_evidence",
+      "source_ids": []
+    },
+    {
+      "question": "咨询宠物航空检疫？",
+      "expected": "no_evidence",
+      "actual": "no_evidence",
+      "source_ids": []
+    },
+    {
+      "question": "咨询 SHOP-2 紫盒验收码？",
+      "expected": "denied",
+      "actual": "denied",
+      "source_ids": []
+    },
+    {
+      "question": "咨询 SHOP-2 蓝箱签收凭证？",
+      "expected": "denied",
+      "actual": "denied",
+      "source_ids": []
+    },
+    {
+      "question": "咨询 SHOP-999 仓库回执？",
+      "expected": "denied",
+      "actual": "denied",
+      "source_ids": []
+    }
+  ],
+  "peak_rss_native": 1115127808
+}

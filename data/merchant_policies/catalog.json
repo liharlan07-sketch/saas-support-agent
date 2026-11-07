@@ -1,0 +1,8 @@
+[
+  {"document_id":"returns","version":"1.0","title":"示例商家售后政策","file":"returns-v1.md","workspace_id":null,"shop_id":null,"effective_from":"2025-01-01","effective_until":"2026-01-01"},
+  {"document_id":"returns","version":"2.0","title":"示例商家售后政策","file":"returns-v2.md","workspace_id":null,"shop_id":null,"effective_from":"2026-01-01","effective_until":"2099-01-01"},
+  {"document_id":"returns","version":"3.0","title":"示例商家售后政策","file":"future.md","workspace_id":null,"shop_id":null,"effective_from":"2099-01-01","effective_until":null},
+  {"document_id":"blue-shop","version":"1.0","title":"SHOP-1 售后补充说明","file":"shop-1.md","workspace_id":"demo-workspace","shop_id":"SHOP-1","effective_from":"2026-01-01","effective_until":null},
+  {"document_id":"purple-shop","version":"1.0","title":"SHOP-2 售后补充说明","file":"shop-2.md","workspace_id":"demo-workspace","shop_id":"SHOP-2","effective_from":"2026-01-01","effective_until":null},
+  {"document_id":"label-guide","version":"1.0","title":"示例退货运单附件说明","file":"shipping-label.pdf","workspace_id":null,"shop_id":null,"effective_from":"2026-01-01","effective_until":null}
+]

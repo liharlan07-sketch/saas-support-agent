@@ -3,7 +3,20 @@ name = "saas-support-agent"
 version = "0.1.0"
 description = "Project collaboration SaaS support agent: controlled notification actions"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.14,<3.15"
 dependencies = []
 
-# Metadata only. Run the standard-library test suite directly from src.
+[project.optional-dependencies]
+api = ["fastapi==0.144.0", "uvicorn==0.54.0", "httpx==0.28.1"]
+rag = [
+    "pymilvus==3.0.2",
+    "milvus-lite[chinese]==3.2.2",
+    "jieba==0.42.1",
+    "fastembed==0.9.1",
+    "onnxruntime==1.26.0",
+    "pypdf==6.9.0",
+]
+
+# Run from src without building or installing the project package.
+[tool.uv]
+package = false

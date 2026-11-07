@@ -1,0 +1,312 @@
+[
+  {
+    "name": "annotated-doc",
+    "locked_version": "0.0.5",
+    "installed_version": "0.0.5",
+    "license": "MIT"
+  },
+  {
+    "name": "annotated-types",
+    "locked_version": "0.8.0",
+    "installed_version": "0.8.0",
+    "license": "MIT"
+  },
+  {
+    "name": "anyio",
+    "locked_version": "4.16.0",
+    "installed_version": "4.16.0",
+    "license": "MIT"
+  },
+  {
+    "name": "cachetools",
+    "locked_version": "7.3.0",
+    "installed_version": "7.3.0",
+    "license": "MIT"
+  },
+  {
+    "name": "certifi",
+    "locked_version": "2026.10.23",
+    "installed_version": "2026.10.23",
+    "license": "MPL-2.0"
+  },
+  {
+    "name": "charset-normalizer",
+    "locked_version": "3.5.2",
+    "installed_version": "3.5.2",
+    "license": "MIT"
+  },
+  {
+    "name": "click",
+    "locked_version": "8.5.0",
+    "installed_version": "8.5.0",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "name": "colorama",
+    "locked_version": "0.4.6",
+    "license": "BSD-3-Clause (PyPI 0.4.6; Windows branch, not installed)"
+  },
+  {
+    "name": "faiss-cpu",
+    "locked_version": "1.15.1",
+    "installed_version": "1.15.1",
+    "license": "MIT"
+  },
+  {
+    "name": "fastapi",
+    "locked_version": "0.144.0",
+    "installed_version": "0.144.0",
+    "license": "MIT"
+  },
+  {
+    "name": "fastembed",
+    "locked_version": "0.9.1",
+    "installed_version": "0.9.1",
+    "license": "Apache-2.0"
+  },
+  {
+    "name": "filelock",
+    "locked_version": "4.2.9",
+    "installed_version": "4.2.9",
+    "license": "MIT"
+  },
+  {
+    "name": "flatbuffers",
+    "locked_version": "25.12.19",
+    "installed_version": "25.12.19",
+    "license": "Apache 2.0"
+  },
+  {
+    "name": "fsspec",
+    "locked_version": "2026.9.0",
+    "installed_version": "2026.9.0",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "name": "grpcio",
+    "locked_version": "1.85.1",
+    "installed_version": "1.85.1",
+    "license": "Apache-2.0"
+  },
+  {
+    "name": "h11",
+    "locked_version": "0.16.0",
+    "installed_version": "0.16.0",
+    "license": "MIT"
+  },
+  {
+    "name": "hf-xet",
+    "locked_version": "1.8.0",
+    "installed_version": "1.8.0",
+    "license": "Apache-2.0"
+  },
+  {
+    "name": "httpcore",
+    "locked_version": "1.0.9",
+    "installed_version": "1.0.9",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "name": "httpx",
+    "locked_version": "0.28.1",
+    "installed_version": "0.28.1",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "name": "huggingface-hub",
+    "locked_version": "1.33.0",
+    "installed_version": "1.33.0",
+    "license": "Apache-2.0"
+  },
+  {
+    "name": "idna",
+    "locked_version": "3.20",
+    "installed_version": "3.20",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "name": "jieba",
+    "locked_version": "0.42.1",
+    "installed_version": "0.42.1",
+    "license": "MIT"
+  },
+  {
+    "name": "loguru",
+    "locked_version": "0.7.3",
+    "installed_version": "0.7.3",
+    "license": "License :: OSI Approved :: MIT License"
+  },
+  {
+    "name": "milvus-lite",
+    "locked_version": "3.2.2",
+    "installed_version": "3.2.2",
+    "license": "Apache-2.0"
+  },
+  {
+    "name": "mmh3",
+    "locked_version": "5.3.1",
+    "installed_version": "5.3.1",
+    "license": "MIT (installed LICENSE verified)"
+  },
+  {
+    "name": "numpy",
+    "locked_version": "2.5.4",
+    "installed_version": "2.5.4",
+    "license": "BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0"
+  },
+  {
+    "name": "onnxruntime",
+    "locked_version": "1.26.0",
+    "installed_version": "1.26.0",
+    "license": "MIT License"
+  },
+  {
+    "name": "opentelemetry-api",
+    "locked_version": "1.45.2",
+    "installed_version": "1.45.2",
+    "license": "Apache-2.0"
+  },
+  {
+    "name": "orjson",
+    "locked_version": "3.13.0",
+    "installed_version": "3.13.0",
+    "license": "MPL-2.0 AND (Apache-2.0 OR MIT)"
+  },
+  {
+    "name": "packaging",
+    "locked_version": "26.3",
+    "installed_version": "26.3",
+    "license": "Apache-2.0 OR BSD-2-Clause"
+  },
+  {
+    "name": "pandas",
+    "locked_version": "3.1.1",
+    "installed_version": "3.1.1",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "name": "pillow",
+    "locked_version": "13.0.0",
+    "installed_version": "13.0.0",
+    "license": "MIT-CMU"
+  },
+  {
+    "name": "protobuf",
+    "locked_version": "7.36.2",
+    "installed_version": "7.36.2",
+    "license": "3-Clause BSD License"
+  },
+  {
+    "name": "py-rust-stemmers",
+    "locked_version": "0.1.8",
+    "installed_version": "0.1.8",
+    "license": "MIT (installed LICENSE verified)"
+  },
+  {
+    "name": "pyarrow",
+    "locked_version": "26.0.1",
+    "installed_version": "26.0.1",
+    "license": "Apache-2.0"
+  },
+  {
+    "name": "pydantic",
+    "locked_version": "2.14.3",
+    "installed_version": "2.14.3",
+    "license": "MIT"
+  },
+  {
+    "name": "pydantic-core",
+    "locked_version": "2.50.4",
+    "installed_version": "2.50.4",
+    "license": "MIT"
+  },
+  {
+    "name": "pymilvus",
+    "locked_version": "3.0.2",
+    "installed_version": "3.0.2",
+    "license": "License :: OSI Approved :: Apache Software License"
+  },
+  {
+    "name": "pypdf",
+    "locked_version": "6.9.0",
+    "installed_version": "6.9.0",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "name": "python-dateutil",
+    "locked_version": "4.0.0",
+    "installed_version": "4.0.0",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "name": "python-dotenv",
+    "locked_version": "1.2.4",
+    "installed_version": "1.2.4",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "name": "pyyaml",
+    "locked_version": "6.0.3",
+    "installed_version": "6.0.3",
+    "license": "MIT"
+  },
+  {
+    "name": "requests",
+    "locked_version": "2.34.2",
+    "installed_version": "2.34.2",
+    "license": "Apache-2.0"
+  },
+  {
+    "name": "starlette",
+    "locked_version": "1.10.0",
+    "installed_version": "1.10.0",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "name": "tokenizers",
+    "locked_version": "0.23.3",
+    "installed_version": "0.23.3",
+    "license": "License :: OSI Approved :: Apache Software License"
+  },
+  {
+    "name": "tqdm",
+    "locked_version": "4.70.1",
+    "installed_version": "4.70.1",
+    "license": "MPL-2.0 AND MIT"
+  },
+  {
+    "name": "typing-extensions",
+    "locked_version": "4.16.0",
+    "installed_version": "4.16.0",
+    "license": "PSF-2.0"
+  },
+  {
+    "name": "typing-inspection",
+    "locked_version": "0.4.5",
+    "installed_version": "0.4.5",
+    "license": "MIT"
+  },
+  {
+    "name": "tzdata",
+    "locked_version": "2026.6",
+    "installed_version": "2026.6",
+    "license": "Apache-2.0"
+  },
+  {
+    "name": "urllib3",
+    "locked_version": "2.8.0",
+    "installed_version": "2.8.0",
+    "license": "MIT"
+  },
+  {
+    "name": "uvicorn",
+    "locked_version": "0.54.0",
+    "installed_version": "0.54.0",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "name": "win32-setctime",
+    "locked_version": "1.2.1",
+    "license": "MIT (project metadata; locked 1.2.1 artifact not locally verified)"
+  }
+]

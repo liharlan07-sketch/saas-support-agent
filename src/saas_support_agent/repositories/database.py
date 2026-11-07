@@ -37,6 +37,75 @@ CREATE TABLE IF NOT EXISTS notification_preferences (
     FOREIGN KEY (workspace_id, user_id) REFERENCES memberships(workspace_id, user_id),
     UNIQUE (workspace_id, user_id, notification_type, channel)
 );
+CREATE TABLE IF NOT EXISTS projects (
+    project_id TEXT PRIMARY KEY,
+    workspace_id TEXT NOT NULL REFERENCES workspaces(workspace_id),
+    name TEXT NOT NULL,
+    status TEXT NOT NULL CHECK (status IN ('active', 'archived')),
+    version INTEGER NOT NULL CHECK (version >= 1),
+    UNIQUE (workspace_id, project_id)
+);
+CREATE TABLE IF NOT EXISTS project_access (
+    workspace_id TEXT NOT NULL,
+    project_id TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    access_level TEXT NOT NULL CHECK (access_level IN ('viewer', 'editor')),
+    version INTEGER NOT NULL CHECK (version >= 1),
+    FOREIGN KEY (workspace_id, project_id) REFERENCES projects(workspace_id, project_id),
+    FOREIGN KEY (workspace_id, user_id) REFERENCES memberships(workspace_id, user_id),
+    PRIMARY KEY (workspace_id, project_id, user_id)
+);
+CREATE TABLE IF NOT EXISTS support_tickets (
+    ticket_id TEXT PRIMARY KEY,
+    workspace_id TEXT NOT NULL,
+    requester_user_id TEXT NOT NULL,
+    issue_type TEXT NOT NULL CHECK (issue_type IN ('access', 'notification', 'usage', 'other')),
+    summary TEXT NOT NULL,
+    context_snapshot TEXT NOT NULL,
+    project_id TEXT,
+    status TEXT NOT NULL CHECK (status IN ('waiting_for_agent', 'in_progress', 'resolved', 'closed')),
+    created_at TEXT NOT NULL,
+    version INTEGER NOT NULL CHECK (version >= 1),
+    FOREIGN KEY (workspace_id, requester_user_id) REFERENCES memberships(workspace_id, user_id),
+    FOREIGN KEY (workspace_id, project_id) REFERENCES projects(workspace_id, project_id)
+);
+CREATE TABLE IF NOT EXISTS shops (
+    workspace_id TEXT NOT NULL REFERENCES workspaces(workspace_id),
+    shop_id TEXT NOT NULL,
+    name TEXT NOT NULL,
+    status TEXT NOT NULL CHECK (status IN ('active', 'inactive')),
+    version INTEGER NOT NULL CHECK (version >= 1),
+    PRIMARY KEY (workspace_id, shop_id)
+);
+CREATE TABLE IF NOT EXISTS shop_access (
+    workspace_id TEXT NOT NULL,
+    shop_id TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    version INTEGER NOT NULL CHECK (version >= 1),
+    FOREIGN KEY (workspace_id, shop_id) REFERENCES shops(workspace_id, shop_id),
+    FOREIGN KEY (workspace_id, user_id) REFERENCES memberships(workspace_id, user_id),
+    PRIMARY KEY (workspace_id, shop_id, user_id)
+);
+CREATE TABLE IF NOT EXISTS orders (
+    workspace_id TEXT NOT NULL,
+    shop_id TEXT NOT NULL,
+    order_id TEXT NOT NULL,
+    status TEXT NOT NULL CHECK (status IN ('paid', 'shipped', 'delivered', 'closed')),
+    delivered_on TEXT,
+    version INTEGER NOT NULL CHECK (version >= 1),
+    FOREIGN KEY (workspace_id, shop_id) REFERENCES shops(workspace_id, shop_id),
+    PRIMARY KEY (workspace_id, shop_id, order_id)
+);
+CREATE UNIQUE INDEX IF NOT EXISTS support_tickets_workspace_id
+    ON support_tickets(workspace_id, ticket_id);
+CREATE TABLE IF NOT EXISTS ticket_orders (
+    ticket_id TEXT PRIMARY KEY,
+    workspace_id TEXT NOT NULL,
+    shop_id TEXT NOT NULL,
+    order_id TEXT NOT NULL,
+    FOREIGN KEY (workspace_id, ticket_id) REFERENCES support_tickets(workspace_id, ticket_id),
+    FOREIGN KEY (workspace_id, shop_id, order_id) REFERENCES orders(workspace_id, shop_id, order_id)
+);
 CREATE TABLE IF NOT EXISTS operation_receipts (
     receipt_id TEXT PRIMARY KEY,
     workspace_id TEXT NOT NULL,
@@ -44,7 +113,7 @@ CREATE TABLE IF NOT EXISTS operation_receipts (
     operation_id TEXT NOT NULL,
     pending_action_id TEXT NOT NULL,
     action_revision INTEGER NOT NULL CHECK (action_revision >= 1),
-    action_type TEXT NOT NULL CHECK (action_type = 'update_notification_preferences'),
+    action_type TEXT NOT NULL CHECK (action_type IN ('update_notification_preferences', 'create_support_ticket')),
     payload_hash TEXT NOT NULL,
     status TEXT NOT NULL CHECK (status IN ('succeeded', 'failed')),
     result_snapshot TEXT NOT NULL,
@@ -74,7 +143,20 @@ class Database:
         """Explicit bootstrap for a new database; no fixtures or credentials."""
         connection = self.connect()
         try:
-            connection.executescript("BEGIN IMMEDIATE;\n" + SCHEMA + "\nCOMMIT;")
+            connection.execute("BEGIN IMMEDIATE")
+            prior = connection.execute(
+                "SELECT sql FROM sqlite_master WHERE type='table' AND name='operation_receipts'"
+            ).fetchone()
+            legacy = prior and "action_type = 'update_notification_preferences'" in prior["sql"]
+            if legacy:
+                connection.execute("ALTER TABLE operation_receipts RENAME TO legacy_receipts")
+            for statement in SCHEMA.split(";"):
+                if statement.strip():
+                    connection.execute(statement)
+            if legacy:
+                connection.execute("INSERT INTO operation_receipts SELECT * FROM legacy_receipts")
+                connection.execute("DROP TABLE legacy_receipts")
+            connection.execute("COMMIT")
         finally:
             connection.close()
 

@@ -7,7 +7,7 @@ import sqlite3
 from uuid import uuid4
 
 from saas_support_agent.core.models import (
-    ACTION_TYPE, CHANNELS, NOTIFICATION_TYPES, Confirmation, NotificationUpdateRequest,
+    ACTION_TYPE, CHANNELS, NOTIFICATION_TYPES, AuthorizationSnapshot, Confirmation, NotificationUpdateRequest,
     OperationReceipt, OperationResult, PendingAction, RuleViolation, TrustedIdentity,
     pending_hash,
 )
@@ -25,6 +25,8 @@ def utc_now() -> datetime:
 
 
 class NotificationService:
+    action_type = ACTION_TYPE
+
     def __init__(self, database: Database, *, clock=utc_now):
         self.database = database
         self.clock = clock
@@ -49,6 +51,15 @@ class NotificationService:
                 or type(request.enabled) is not bool):
             raise RuleViolation("needs_clarification", "invalid_parameters", "通知类型、渠道或布尔值不合法。")
 
+    def authorize(self, identity: TrustedIdentity) -> AuthorizationSnapshot:
+        """参数尚未收齐时也检查成员资格，Memory 不能替代 authorization。"""
+        self.validate_identity(identity)
+        connection = self.database.connect()
+        try:
+            return self.memberships.require_active(connection, identity)
+        finally:
+            connection.close()
+
     def load_current(self, identity: TrustedIdentity, request: NotificationUpdateRequest):
         self.validate_identity(identity)
         self.validate_request(request)
@@ -56,10 +67,20 @@ class NotificationService:
         try:
             connection.execute("BEGIN")
             authorization = self.memberships.require_active(connection, identity)
-            current = self.preferences.get(connection, identity, request.notification_type, request.channel)
+            current = self._current(connection, identity, request)
             return authorization, current
         finally:
             connection.close()  # Ends this read-only snapshot.
+
+    def _current(self, connection, identity, request):
+        return self.preferences.get(connection, identity, request.notification_type, request.channel)
+
+    def _apply(self, connection, identity, pending, current):
+        updated = self.preferences.update(connection, current, pending.payload.enabled)
+        return {
+            **asdict(updated), "old_enabled": current.enabled,
+            "previous_version": current.version, "changed": current != updated,
+        }
 
     def query_preference(self, identity: TrustedIdentity, notification_type: str, channel: str) -> OperationResult:
         try:
@@ -72,6 +93,10 @@ class NotificationService:
             return OperationResult(identity.request_id, "failed", "暂时无法查询设置。",
                                    branch="Query", error_code="database_unavailable")
 
+    def _authorize_receipt(self, connection, identity, receipt):
+        if receipt is None or receipt.action_type != self.action_type:
+            raise RuleViolation("denied", "scope_or_permission_denied", "无权访问此工作空间或对象。")
+
     def query_receipt(self, identity: TrustedIdentity, operation_id: str) -> OperationResult:
         connection = None
         try:
@@ -80,8 +105,7 @@ class NotificationService:
             connection.execute("BEGIN")
             self.memberships.require_active(connection, identity)
             receipt = self.receipts.get(connection, identity, operation_id)
-            if receipt is None:
-                raise RuleViolation("denied", "scope_or_permission_denied", "无权访问此工作空间或对象。")
+            self._authorize_receipt(connection, identity, receipt)
             return OperationResult(identity.request_id, "answered", "已查询操作回执。", branch="Query",
                                    data=dict(receipt.result_snapshot), receipt=receipt)
         except RuleViolation as error:
@@ -93,12 +117,11 @@ class NotificationService:
             if connection is not None:
                 connection.close()
 
-    @staticmethod
-    def _check_binding(identity: TrustedIdentity, pending: PendingAction, confirmation: Confirmation) -> None:
+    def _check_binding(self, identity: TrustedIdentity, pending: PendingAction, confirmation: Confirmation) -> None:
         if (pending.owner_user_id, pending.workspace_id, pending.session_id) != (
                 identity.user_id, identity.workspace_id, identity.session_id):
             raise RuleViolation("denied", "scope_or_permission_denied", "无权执行此操作。")
-        if (pending.action_type != ACTION_TYPE or pending.canonical_payload_hash != pending_hash(pending)
+        if (pending.action_type != self.action_type or pending.canonical_payload_hash != pending_hash(pending)
                 or pending.workflow_state != "confirmed"):
             raise RuleViolation("needs_confirmation", "invalid_draft", "待确认内容不一致。")
         if (confirmation.pending_action_id, confirmation.revision, confirmation.operation_id,
@@ -146,25 +169,23 @@ class NotificationService:
             authorization = self.memberships.require_active(connection, identity)
             receipt = self.receipts.get(connection, identity, pending.operation_id)
             if receipt:
-                return self._receipt_result(identity, pending, receipt)
+                result = self._receipt_result(identity, pending, receipt)
+                self._authorize_receipt(connection, identity, receipt)
+                return result
             now = self.clock()
             if now >= pending.expires_at or confirmation.confirmed_at > now:
                 raise RuleViolation("needs_confirmation", "confirmation_expired", "确认已过期，请重新查看并确认。")
-            current = self.preferences.get(connection, identity, pending.payload.notification_type, pending.payload.channel)
+            current = self._current(connection, identity, pending.payload)
             if authorization != pending.expected_versions or current != pending.current:
                 raise RuleViolation("needs_confirmation", "business_state_changed", "当前状态已变化，请重新查看并确认。")
 
             execution_started = True
-            updated = self.preferences.update(connection, current, pending.payload.enabled)
-            snapshot = {
-                **asdict(updated), "old_enabled": current.enabled,
-                "previous_version": current.version, "changed": current != updated,
-            }
+            snapshot = self._apply(connection, identity, pending, current)
             receipt = self._make_receipt(identity, pending, "succeeded", snapshot)
             self.receipts.save(connection, receipt)
             commit_attempted = True
             self.database.commit(connection)
-            logger.info("notification_execution request_id=%s operation_id=%s status=succeeded",
+            logger.info("action_execution request_id=%s operation_id=%s status=succeeded",
                         identity.request_id, pending.operation_id)
             return self._receipt_result(identity, pending, receipt)
         except RuleViolation as error:
@@ -181,7 +202,7 @@ class NotificationService:
             if connection is not None:
                 connection.close()
                 connection = None
-            logger.warning("notification_execution request_id=%s operation_id=%s stage=exception",
+            logger.warning("action_execution request_id=%s operation_id=%s stage=exception",
                            identity.request_id, pending.operation_id)
             if (commit_attempted and not rollback_known) or (execution_started and not rollback_known):
                 resolved = self.reconcile(identity, pending)
@@ -211,7 +232,9 @@ class NotificationService:
             self.memberships.require_active(connection, identity)
             existing = self.receipts.get(connection, identity, pending.operation_id)
             if existing:
-                return self._receipt_result(identity, pending, existing)
+                result = self._receipt_result(identity, pending, existing)
+                self._authorize_receipt(connection, identity, existing)
+                return result
             receipt = self._make_receipt(identity, pending, "failed", {}, failed.error_code)
             self.receipts.save(connection, receipt)
             self.database.commit(connection)
@@ -235,7 +258,9 @@ class NotificationService:
             self.memberships.require_active(connection, identity)
             receipt = self.receipts.get(connection, identity, pending.operation_id)
             if receipt:
-                return self._receipt_result(identity, pending, receipt)
+                result = self._receipt_result(identity, pending, receipt)
+                self._authorize_receipt(connection, identity, receipt)
+                return result
         except RuleViolation as error:
             return error.result(identity)
         except Exception:

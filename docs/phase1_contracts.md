@@ -1,10 +1,14 @@
 # Phase 1：Intent / Slots / Router Contract
 
-状态：V1 设计契约。已实现 notification_update 的结构化执行子集；Intent/Slots/Router、完整 Memory 与 RAG 尚未接入。本文与领域模型、状态机、评测规格共同构成首版基线。
+状态：V1 设计契约。已实现 notification_update 的结构化执行子集及最小 Task Context；Intent/Slots/Router、Conversation History 与 RAG 尚未接入。本文与领域模型、状态机、评测规格共同构成首版基线。
 
 ## 1. 固定顺序与信任边界
 
-Trusted Identity Context → Load Memory → Intent / Slots / Confidence → Validation / Entity Resolution / Missing Slots → Deterministic Router → Branch Execution → Unified Result → Update Memory。
+对外职责概览：User Request → Conversation Intelligence → Deterministic Router → Knowledge / Query / Action；其中 Knowledge → Knowledge Support。
+
+完整顺序保持：Trusted Identity Context → Conversation Intelligence（Load Context → Intent / Slots / Confidence）→ Validation / Entity Resolution / Missing Slots → Deterministic Router → Branch Execution → Unified Result → Update Context。Context 包含既有 Conversation Context / Task Context 的 Memory 约定，仅统一职责名称，不改变状态继承、隔离和确认语义。
+
+Conversation Intelligence 的目标职责是 Request Understanding、Intent Recognition、Slot Extraction、Confidence、Conversation Context、Task Context。Knowledge Support 的目标职责是 Query Rewrite、Retrieval、Filtering / Dedup、Rerank、Evidence、Citation、No-evidence / fallback。两者尚未迁移接入；当前 notification_update 仍使用可信结构化输入。
 
 可信上下文由受信适配器提供 user_id、active_workspace_id、session_id、request_id。V1 的开发身份适配器不等同生产认证；用户聊天文本或任意客户端字段不能赋予身份和权限。每个对象访问仍需业务服务验证成员关系、对象归属和可见范围。
 
@@ -69,7 +73,9 @@ Router 使用校验后的枚举和结构化参数确定分支。LLM 不选择任
 
 ## 6. Memory 状态契约（不默认对应数据库表）
 
-TaskContext：task_id、owner_user_id、workspace_id、intent、entity_refs、confirmed_slots、fact_provenance、attempted_steps、query_snapshots、pending_action、可选 suspended_query。每个 fact 带来源（用户明确/用户确认/工具观测/模型推测）和 scope；推测不能直接成为写入参数。观察结果带 observed_at 和业务版本，执行前必须重新读取关键状态。
+以下为后续上下文能力的设计候选，不是已实现字段清单；当前最小实现以第 10 节为准。TaskContext 不复制 PendingAction。
+
+TaskContext 设计候选：task_id、owner_user_id、workspace_id、intent、entity_refs、confirmed_slots、fact_provenance、attempted_steps、query_snapshots、pending_action、可选 suspended_query。每个 fact 带来源（用户明确/用户确认/工具观测/模型推测）和 scope；推测不能直接成为写入参数。观察结果带 observed_at 和业务版本，执行前必须重新读取关键状态。
 
 PendingAction：pending_action_id、revision、operation_id、owner_user_id、workspace_id、action_type、规范化 payload、canonical_payload_hash、expected_versions、已展示摘要、expires_at、workflow_state。
 
@@ -77,15 +83,17 @@ Confirmation：pending_action_id、revision、payload_hash、owner_user_id、wor
 
 operation_id 标识一次规范化后的操作版本；同版本确认重试保持该 ID，用户改参数/摘要则 revision 增加并生成新 operation_id。不是文本相同就视作同一操作。执行事实以 Repository 为准，Memory 丢失不能通过模型猜测执行结果。
 
-## 7. 统一结果与 RAG 接口
+## 7. 统一结果与 Knowledge Support 接口
 
 OperationResult：request_id、branch、status、message、data、evidence、missing_slots、pending_action、receipt、error_code。status 集合为 answered / needs_clarification / needs_confirmation / succeeded / failed / cancelled / unsupported / no_evidence / denied / pending_resolution。不同状态字段约束在后续类型实现时固化；没有 receipt 和提交证据不能返回写操作 succeeded。
 
 SupportTicket.status=waiting_for_agent 放在 data 中，与 OperationResult.status=succeeded 分开。失败信息不泄露他人对象或内部凭证。
 
-Lingyu → RAG：request_id、original_question、context_messages（限长投影）、knowledge_scope（应用确定的模块/版本）。RAG → Lingyu：status（answered/no_evidence/error）、answer、evidence、search_query、degraded_reason、可选 trace。生成使用原问题，检索使用 search_query；证据带稳定来源、版本、页码/片段标识。RAG 不维护第二套业务会话，不写业务数据，不决定权限。
+Conversation Intelligence 提供请求理解与上下文，经校验和 Deterministic Router 进入 Knowledge 分支后，再调用 Knowledge Support。Knowledge 分支 → Knowledge Support：request_id、original_question、context_messages（限长投影）、knowledge_scope（应用确定的模块/版本）。Knowledge Support → Knowledge 分支：status（answered/no_evidence/error）、answer、evidence、search_query、degraded_reason、可选 trace，再进入统一结果返回路径。生成使用原问题，检索使用 search_query；证据带稳定来源、版本、页码/片段标识。Knowledge Support 不维护第二套业务会话，不写业务数据，不决定权限。此处只统一模块名称，保留原接口字段与行为约定。
 
 ## 8. 参考实现迁移登记（尚未迁移）
+
+source project / migration source：Lingyu（lingyu_chat）是 Conversation Intelligence 的能力来源参考，SmartReading（smart_reading）是 Knowledge Support 的能力来源参考。原名称仅用于说明来源和开发历史，不作为本系统业务模块名；原工程保持只读，尚未迁移。下表记录来源实现的复用判断，本系统当前实现边界见第 9–10 节。
 
 | 能力 | 分类 | 后续处理 |
 | --- | --- | --- |
@@ -96,11 +104,11 @@ Lingyu → RAG：request_id、original_question、context_messages（限长投�
 | 改写/召回/LLM 重排 | 需要重构、需要修 bug | 原问题边界、短指代、空证据和失败降级 |
 | Evidence/Diagnostics | 可保留结构思路 | 稳定 ID、序列化与统一状态 |
 | 电商/论文角色 Prompt、直接全局字典访问 | 新工程不再使用 | 原工程保留，不删除 |
-| Router/Business Service/Repository/Action/Evaluation | 新增实现 | 当前不存在完整业务闭环 |
+| Router/Business Service/Repository/Action/Evaluation | 新增实现 | 源项目不提供完整业务闭环；本系统实现状态见第 9–10 节 |
 
 迁移原则：阅读原实现 → 判断保留价值 → 明确接口 → 必要重构 → 小范围迁移 → 经授权验证。优先修低置信度 trace_id 缺失、用户隔离、密钥注入与导入冲突。BM25/MMR/Hybrid/RRF、Redis 和服务拆分不在 V1 范围。
 
-## 9. notification_update 实现边界（2026-10-13）
+## 9. notification_update 实现边界（2026-10-13 历史快照）
 
 - 当前入口为可信 Python 调用方提供的 `TrustedIdentity` 与 `NotificationUpdateRequest`；不做自然语言解析。身份不能由不受信文本或任意 HTTP 参数直接构造。
 - `prepare` 返回不可变 PendingAction 及完整摘要；调用方展示后，用明确的 `confirm(identity, pending_action_id, revision, payload_hash)` 事件确认。没有 UI，不声称系统能判断人是否实际阅读了摘要。
@@ -110,3 +118,17 @@ Lingyu → RAG：request_id、original_question、context_messages（限长投�
 - 当前 Workspace 由可信上下文指定，不解析名称。跨 Workspace 更换写操作需要先处理原操作；不跨范围自动继承确认。
 - 已实现一个待确认写操作、显式 revise/cancel、终态或不确定结果核对。未实现完整 TaskContext、Query 插入/恢复和自然语言任务切换。
 - 日志仅含请求/操作编号、阶段和结果，不输出原始业务内容或数据库异常消息。查询返回 branch=Query；执行返回 branch=Action。
+
+
+## 10. Task Context 最小实现（2026-10-17）
+
+- 结构化入口 `TaskContextManager` 位于 workflows/task_context.py，使用配对的原 NotificationUpdateWorkflow。未接入语言理解、历史、摘要或来源工程实现。
+- TaskRecord 保存 task_id、owner_user_id、workspace_id、session_id、task_type；补参阶段保存 collected。prepare 成功后清除 collected，仅关联 pending_action_id。TaskContext.collected_slots/missing_slots/task_status 是只读投影，活跃操作以 PendingAction 为准；已结束任务只保留终态标记，不维护第二份执行状态机。
+- 新 task_id 区分新旧任务事件；不另加重复的任务 revision。原操作的 revision/hash/operation_id 仍由原 Workflow 管理。新任务不自动继承任何旧业务 Slots。
+- Store 以 user/workspace/session 为键；单写守卫沿用原 Workflow 的 user/session 范围（跨 Workspace 也不能开启第二个写任务）。不跨范围返回任务或恢复草稿。
+- 只支持通知修改；第二写请求只返回继续/取消后切换提示，不暂存候选文本、不自动切换；create_support_ticket 仍 unsupported。
+- 有限 Query 复用通知设置查询，串行返回，不构造任务栈或 suspended_query。Query 不改写任务；调用方显式 resume，重验权限、参数完整性、目标状态、版本及期限。草稿过期/相关状态变化经过原 revise 重新展示；resume 本身不执行，最终确认仍做事务内校验。
+- 已准备草稿只接受完整合法修正，经过 revise 使旧确认失效；非法/缺参修正明确拒绝，保留原草稿，不声称已经应用修改。补参阶段可继续收集缺失值。
+- cancelled/succeeded/已知 failed 关闭；invalidated 不能恢复但可以 cleanup；pending_resolution 仍活跃，必须保留核对关联，不可取消、覆盖或清理。临时数据库读取失败不等于业务执行已失败，不关闭待确认草稿。
+- TaskContextStore 与原 PendingAction 都在进程内；共享同一 Manager/Workflow 生命周期。重启丢失任务，不能从聊天记录重建旧确认或猜测执行结果。回执仍持久化，持有 operation_id 时可用原查询服务核对；没有自动重启恢复或持久化待执行队列。
+- 不新增时间戳/空闲 TTL/Task version：当前隔离与旧事件失效由 scope + task_id + 原草稿 revision/期限解决。收集中的任务需显式结束，无自动空闲回收。完整生命周期、测试与取舍见 task_context_handoff.md。

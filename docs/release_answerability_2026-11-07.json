@@ -1,0 +1,414 @@
+{
+  "original": {
+    "n": 24,
+    "answered": 19,
+    "no_evidence": 5,
+    "all_expected_returned": 19,
+    "rows": [
+      {
+        "query": "退货申请最晚在收货后几天发起？",
+        "expected": [
+          "returns:2.0:1"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:1"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "申请退货的时钟从哪天开始算？",
+        "expected": [
+          "returns:2.0:1"
+        ],
+        "status": "no_evidence",
+        "returned_sources": [],
+        "all_expected_returned": false
+      },
+      {
+        "query": "签收都八天了，还能让客服看一下吗？",
+        "expected": [
+          "returns:2.0:2"
+        ],
+        "status": "no_evidence",
+        "returned_sources": [],
+        "all_expected_returned": false
+      },
+      {
+        "query": "错过售后申请窗口，需要提交什么来人工复查？",
+        "expected": [
+          "returns:2.0:2"
+        ],
+        "status": "no_evidence",
+        "returned_sources": [],
+        "all_expected_returned": false
+      },
+      {
+        "query": "包裹还在路上，没有收到货怎么排查？",
+        "expected": [
+          "returns:2.0:3"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:3"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "疑似物流途中丢件，应先做什么？",
+        "expected": [
+          "returns:2.0:3"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:3"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "拆开快递发现商品碎了，拍哪些照片？",
+        "expected": [
+          "returns:2.0:4"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:4"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "收到商品外壳坏了，需要记录破损位置吗？",
+        "expected": [
+          "returns:2.0:4"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:4"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "下单大号却送了小号，提供什么信息给客服？",
+        "expected": [
+          "returns:2.0:5"
+        ],
+        "status": "no_evidence",
+        "returned_sources": [],
+        "all_expected_returned": false
+      },
+      {
+        "query": "货品规格和订单不匹配，该保留什么？",
+        "expected": [
+          "returns:2.0:5"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:5"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "人工同意退货后寄往哪里？",
+        "expected": [
+          "returns:2.0:6"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:6"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "把退货件寄出后，是否要填快递单号？",
+        "expected": [
+          "returns:2.0:6"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:6"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "客户拒收是否意味着退货已经办完？",
+        "expected": [
+          "returns:2.0:7"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:7",
+          "returns:2.0:9"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "拒签以后需要核实什么物流记录？",
+        "expected": [
+          "returns:2.0:7"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:7"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "找不到签收凭证，还有什么可以作为材料？",
+        "expected": [
+          "returns:2.0:8"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:8"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "没有收件证明，能先提供物流截图吗？",
+        "expected": [
+          "returns:2.0:8"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:8"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "售后显示待人工受理，是不是已经退款？",
+        "expected": [
+          "returns:2.0:9"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:9"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "工单仅登记了，我怎么查处理情况？",
+        "expected": [
+          "returns:2.0:9"
+        ],
+        "status": "no_evidence",
+        "returned_sources": [],
+        "all_expected_returned": false
+      },
+      {
+        "query": "同一订单的问题已经提交过，是否再建一单？",
+        "expected": [
+          "returns:2.0:10"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:10"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "不想重复提交售后请求，怎么跟踪已有问题？",
+        "expected": [
+          "returns:2.0:10"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:10"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "SHOP-1 蓝箱的签收材料需要哪两项？",
+        "expected": [
+          "blue-shop:1.0:1"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "blue-shop:1.0:1"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "SHOP-1 没有把赠品一起退回怎么办？",
+        "expected": [
+          "blue-shop:1.0:2"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "blue-shop:1.0:2"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "What is the exact RETURN-LABEL-42 reference in the PDF?",
+        "expected": [
+          "label-guide:1.0:1"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "label-guide:1.0:1"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "超期了也找不到签收凭证，有哪些步骤和替代材料？",
+        "expected": [
+          "returns:2.0:2",
+          "returns:2.0:8"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:8",
+          "returns:2.0:2"
+        ],
+        "all_expected_returned": true
+      }
+    ]
+  },
+  "probes": {
+    "n": 12,
+    "answered": 12,
+    "no_evidence": 0,
+    "all_expected_returned": 11,
+    "rows": [
+      {
+        "query": "已经签收八天，超过七天退货期限了，还能申请人工复核吗？",
+        "expected": [
+          "returns:2.0:2"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:2"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "收到货八天了，现在想退货应该怎么办？",
+        "expected": [
+          "returns:2.0:2"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:1"
+        ],
+        "all_expected_returned": false
+      },
+      {
+        "query": "签收第九天才提出退货，是否可以登记人工核对？",
+        "expected": [
+          "returns:2.0:2"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:2",
+          "returns:2.0:4",
+          "returns:2.0:9"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "签收十天错过退货期限，需要哪些人工审核材料？",
+        "expected": [
+          "returns:2.0:2"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:2",
+          "returns:2.0:8"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "示例商家的退货申请期限是不是签收后七天？",
+        "expected": [
+          "returns:2.0:1"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:1"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "收货第二天想申请退货，示例申请期限如何计算？",
+        "expected": [
+          "returns:2.0:1"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:1"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "下单八天还没签收，怀疑包裹丢失，应先查什么？",
+        "expected": [
+          "returns:2.0:3"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:3",
+          "returns:2.0:8"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "快递在路上九天了还未收货，如何登记物流异常？",
+        "expected": [
+          "returns:2.0:3"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:3"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "今天刚签收，打开包装发现碎了，要拍哪些照片？",
+        "expected": [
+          "returns:2.0:4"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:4"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "签收第二天发现商品外壳破损，如何提供核验材料？",
+        "expected": [
+          "returns:2.0:4"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:4"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "超过退货期限，同时丢了签收凭证，能提供哪些替代材料并申请复核？",
+        "expected": [
+          "returns:2.0:2",
+          "returns:2.0:8"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:8",
+          "returns:2.0:2"
+        ],
+        "all_expected_returned": true
+      },
+      {
+        "query": "工单等了八天还是待人工受理，是否代表已退款？",
+        "expected": [
+          "returns:2.0:9"
+        ],
+        "status": "answered",
+        "returned_sources": [
+          "returns:2.0:9",
+          "returns:2.0:2"
+        ],
+        "all_expected_returned": true
+      }
+    ]
+  }
+}

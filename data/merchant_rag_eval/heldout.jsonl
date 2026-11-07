@@ -1,0 +1,24 @@
+{"query":"退货申请最晚在收货后几天发起？","evidence":["returns:2.0:1"]}
+{"query":"申请退货的时钟从哪天开始算？","evidence":["returns:2.0:1"]}
+{"query":"签收都八天了，还能让客服看一下吗？","evidence":["returns:2.0:2"]}
+{"query":"错过售后申请窗口，需要提交什么来人工复查？","evidence":["returns:2.0:2"]}
+{"query":"包裹还在路上，没有收到货怎么排查？","evidence":["returns:2.0:3"]}
+{"query":"疑似物流途中丢件，应先做什么？","evidence":["returns:2.0:3"]}
+{"query":"拆开快递发现商品碎了，拍哪些照片？","evidence":["returns:2.0:4"]}
+{"query":"收到商品外壳坏了，需要记录破损位置吗？","evidence":["returns:2.0:4"]}
+{"query":"下单大号却送了小号，提供什么信息给客服？","evidence":["returns:2.0:5"]}
+{"query":"货品规格和订单不匹配，该保留什么？","evidence":["returns:2.0:5"]}
+{"query":"人工同意退货后寄往哪里？","evidence":["returns:2.0:6"]}
+{"query":"把退货件寄出后，是否要填快递单号？","evidence":["returns:2.0:6"]}
+{"query":"客户拒收是否意味着退货已经办完？","evidence":["returns:2.0:7"]}
+{"query":"拒签以后需要核实什么物流记录？","evidence":["returns:2.0:7"]}
+{"query":"找不到签收凭证，还有什么可以作为材料？","evidence":["returns:2.0:8"]}
+{"query":"没有收件证明，能先提供物流截图吗？","evidence":["returns:2.0:8"]}
+{"query":"售后显示待人工受理，是不是已经退款？","evidence":["returns:2.0:9"]}
+{"query":"工单仅登记了，我怎么查处理情况？","evidence":["returns:2.0:9"]}
+{"query":"同一订单的问题已经提交过，是否再建一单？","evidence":["returns:2.0:10"]}
+{"query":"不想重复提交售后请求，怎么跟踪已有问题？","evidence":["returns:2.0:10"]}
+{"query":"SHOP-1 蓝箱的签收材料需要哪两项？","evidence":["blue-shop:1.0:1"]}
+{"query":"SHOP-1 没有把赠品一起退回怎么办？","evidence":["blue-shop:1.0:2"]}
+{"query":"What is the exact RETURN-LABEL-42 reference in the PDF?","evidence":["label-guide:1.0:1"]}
+{"query":"超期了也找不到签收凭证，有哪些步骤和替代材料？","evidence":["returns:2.0:2","returns:2.0:8"]}

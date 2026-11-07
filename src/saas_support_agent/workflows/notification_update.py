@@ -12,7 +12,7 @@ from threading import RLock
 from uuid import uuid4
 
 from saas_support_agent.core.models import (
-    ACTION_TYPE, Confirmation, NotificationUpdateRequest, OperationResult,
+    Confirmation, NotificationUpdateRequest, OperationResult,
     PendingAction, RuleViolation, TrustedIdentity, pending_hash,
 )
 from saas_support_agent.services.notification_service import NotificationService
@@ -40,17 +40,19 @@ class NotificationUpdateWorkflow:
             raise RuleViolation("denied", "scope_or_permission_denied", "请返回原工作空间处理待确认操作。")
         return pending
 
-    def _build(self, identity, request, *, previous=None):
-        authorization, current = self.service.load_current(identity, request)
-        summary = (
+    def _summary(self, identity, request, current):
+        return (
             f"工作空间 {identity.workspace_id}，本人 {identity.user_id}："
             f"{request.notification_type}/{request.channel} "
             f"从{'开启' if current.enabled else '关闭'}改为{'开启' if request.enabled else '关闭'}。"
         )
+    def _build(self, identity, request, *, previous=None):
+        authorization, current = self.service.load_current(identity, request)
+        summary = self._summary(identity, request, current)
         draft = PendingAction(
             previous.pending_action_id if previous else str(uuid4()),
             previous.revision + 1 if previous else 1, str(uuid4()),
-            identity.user_id, identity.workspace_id, identity.session_id, ACTION_TYPE,
+            identity.user_id, identity.workspace_id, identity.session_id, self.service.action_type,
             request, current, authorization, summary, self.service.clock() + self.confirmation_ttl,
         )
         draft = replace(draft, canonical_payload_hash=pending_hash(draft))
@@ -162,3 +164,54 @@ class NotificationUpdateWorkflow:
                 return self._remember_result(identity, pending, result)
             except RuleViolation as error:
                 return error.result(identity)
+
+    def inspect_pending(self, identity: TrustedIdentity) -> PendingAction | None:
+        """仅向可信内部调用方提供同 scope 的不可变草稿，不代表确认仍有效。"""
+        with self._lock:
+            self.service.validate_identity(identity)
+            pending = self._pending.get(self._key(identity))
+            if pending is None or pending.workspace_id != identity.workspace_id:
+                return None
+            return pending
+
+    def has_pending_write(self, identity: TrustedIdentity) -> bool:
+        with self._lock:
+            self.service.validate_identity(identity)
+            pending = self._pending.get(self._key(identity))
+            return pending is not None and pending.workflow_state in {
+                "pending_confirmation", "confirmed", "pending_resolution",
+            }
+
+    def resume(self, identity: TrustedIdentity, pending_action_id: str) -> OperationResult:
+        """Query 后恢复只做 revalidation；刷新草稿也不执行写入。
+
+        pending_resolution 只能核对回执，不能因到期或失权丢弃操作关联。
+        """
+        with self._lock:
+            try:
+                pending = self._get(identity)
+                if pending.pending_action_id != pending_action_id:
+                    raise RuleViolation("needs_confirmation", "stale_action", "原任务已失效，请查看当前任务。")
+                if pending.workflow_state != "pending_confirmation":
+                    return self.resolve(identity)
+                if pending.canonical_payload_hash != pending_hash(pending):
+                    self._pending[self._key(identity)] = replace(pending, workflow_state="failed")
+                    raise RuleViolation("failed", "invalid_draft", "待确认内容不一致，请重新发起。")
+                try:
+                    authorization, current = self.service.load_current(identity, pending.payload)
+                except RuleViolation:
+                    # 尚未执行且授权/参数失效，可以关闭；执行结果未知不能走这里。
+                    self._pending[self._key(identity)] = replace(pending, workflow_state="failed")
+                    raise
+                expired = self.service.clock() >= pending.expires_at
+                changed = authorization != pending.expected_versions or current != pending.current
+                if expired or changed:
+                    refreshed = self.revise(identity, pending.payload)
+                    return replace(refreshed, error_code=("confirmation_expired" if expired else "business_state_changed"))
+                return OperationResult(identity.request_id, "needs_confirmation", pending.displayed_summary,
+                                       pending_action=pending)
+            except RuleViolation as error:
+                return error.result(identity)
+            except sqlite3.Error:
+                return OperationResult(identity.request_id, "failed", "暂时无法校验原任务，请稍后恢复。",
+                                       error_code="database_unavailable")

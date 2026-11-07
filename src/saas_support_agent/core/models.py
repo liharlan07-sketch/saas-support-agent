@@ -8,6 +8,7 @@ from typing import Any
 
 
 ACTION_TYPE = "update_notification_preferences"
+TICKET_ACTION_TYPE = "create_support_ticket"
 NOTIFICATION_TYPES = frozenset({"task_assigned", "comment_mentioned"})
 CHANNELS = frozenset({"email", "in_app"})
 
@@ -28,6 +29,17 @@ class NotificationUpdateRequest:
     notification_type: str | None = None
     channel: str | None = None
     enabled: bool | None = None
+
+
+@dataclass(frozen=True)
+class SupportTicketRequest:
+    issue_type: str | None = None
+    description: str | None = None
+    project_id: str | None = None
+    steps: str | None = None
+    observed_error: str | None = None
+    shop_id: str | None = None
+    order_id: str | None = None
 
 
 @dataclass(frozen=True)
@@ -55,8 +67,8 @@ class PendingAction:
     workspace_id: str
     session_id: str
     action_type: str
-    payload: NotificationUpdateRequest
-    current: NotificationPreference
+    payload: NotificationUpdateRequest | SupportTicketRequest
+    current: NotificationPreference | tuple[int, ...] | None
     expected_versions: AuthorizationSnapshot
     displayed_summary: str
     expires_at: datetime

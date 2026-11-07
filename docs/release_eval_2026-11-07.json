@@ -1,0 +1,1664 @@
+{
+  "date": "2026-11-07",
+  "policy_as_of": "2026-11-06",
+  "python": "3.14.7",
+  "machine": "arm64",
+  "models": {
+    "embedding": [
+      "Qdrant/bge-small-zh-v1.5",
+      "46fbe35fd4374a00fee7de77dfddaeb6dd6a2c59",
+      "model_optimized.onnx",
+      "1294ea4b6331115a353d81f96b85e8c8d7fdcc284453d5b2fab5b016230aad38"
+    ],
+    "rerank": [
+      "onnx-community/bge-reranker-v2-m3-ONNX",
+      "90213ffc6a8e6f051a6331269a0f5526cdd896f6",
+      "onnx/model_int8.onnx",
+      "912fc1215c2dbff6499700534bd8d31253af01573861abbfc43afd1fab6cce5d"
+    ]
+  },
+  "dataset_sha256": {
+    "data/merchant_rag_eval/heldout.jsonl": "542be9b601760c508916bcaae63f3d44850116a1b99a88251a0b66d00881497a",
+    "data/merchant_rag_eval/temporal_probes.jsonl": "203a420608a75ee2f770175ff5e0de5729a15bb9624ddd8043c923ab3b55542f",
+    "data/merchant_rag_eval/boundaries.jsonl": "950d8a17e0dcd0e25b1b19fb65ab6aa7a179bd8a45dcba96cb19a202a52c61b0"
+  },
+  "index_generation": "95ddf2cc1d644e36b9218f727cf991d2",
+  "original_queries": 24,
+  "probe_queries": 12,
+  "probe_scope": "exploratory synthetic tests added after observing failure; not an independent heldout set",
+  "original": {
+    "dense": {
+      "recall_at_5": 0.9167,
+      "hit_at_1": 21,
+      "p50_ms": 7.52,
+      "p95_ms": 15.18,
+      "misses_at_1": [
+        {
+          "question": "签收都八天了，还能让客服看一下吗？",
+          "first": "returns:2.0:1"
+        },
+        {
+          "question": "错过售后申请窗口，需要提交什么来人工复查？",
+          "first": "returns:2.0:10"
+        },
+        {
+          "question": "下单大号却送了小号，提供什么信息给客服？",
+          "first": "returns:2.0:10"
+        }
+      ]
+    },
+    "hybrid": {
+      "recall_at_5": 0.9167,
+      "hit_at_1": 22,
+      "p50_ms": 6.89,
+      "p95_ms": 10.46,
+      "misses_at_1": [
+        {
+          "question": "签收都八天了，还能让客服看一下吗？",
+          "first": "returns:2.0:1"
+        },
+        {
+          "question": "下单大号却送了小号，提供什么信息给客服？",
+          "first": "returns:2.0:6"
+        }
+      ]
+    },
+    "rerank": {
+      "recall_at_5": 1.0,
+      "hit_at_1": 23,
+      "p50_ms": 845.08,
+      "p95_ms": 1245.1,
+      "misses_at_1": [
+        {
+          "question": "签收都八天了，还能让客服看一下吗？",
+          "first": "returns:2.0:4"
+        }
+      ]
+    }
+  },
+  "probes": {
+    "dense": {
+      "recall_at_5": 1.0,
+      "hit_at_1": 11,
+      "p50_ms": 6.34,
+      "p95_ms": 8.13,
+      "misses_at_1": [
+        {
+          "question": "收到货八天了，现在想退货应该怎么办？",
+          "first": "returns:2.0:6"
+        }
+      ]
+    },
+    "hybrid": {
+      "recall_at_5": 1.0,
+      "hit_at_1": 10,
+      "p50_ms": 7.84,
+      "p95_ms": 9.4,
+      "misses_at_1": [
+        {
+          "question": "已经签收八天，超过七天退货期限了，还能申请人工复核吗？",
+          "first": "returns:2.0:1"
+        },
+        {
+          "question": "收到货八天了，现在想退货应该怎么办？",
+          "first": "returns:2.0:6"
+        }
+      ]
+    },
+    "rerank": {
+      "recall_at_5": 1.0,
+      "hit_at_1": 11,
+      "p50_ms": 894.94,
+      "p95_ms": 1340.65,
+      "misses_at_1": [
+        {
+          "question": "收到货八天了，现在想退货应该怎么办？",
+          "first": "returns:2.0:1"
+        }
+      ]
+    }
+  },
+  "boundaries": [
+    {
+      "question": "咨询火星天气预报？",
+      "expected": "no_evidence",
+      "actual": "no_evidence",
+      "source_ids": []
+    },
+    {
+      "question": "咨询公司股票股息税率？",
+      "expected": "no_evidence",
+      "actual": "no_evidence",
+      "source_ids": []
+    },
+    {
+      "question": "咨询宠物航空检疫？",
+      "expected": "no_evidence",
+      "actual": "no_evidence",
+      "source_ids": []
+    },
+    {
+      "question": "咨询 SHOP-2 紫盒验收码？",
+      "expected": "denied",
+      "actual": "denied",
+      "source_ids": []
+    },
+    {
+      "question": "咨询 SHOP-2 蓝箱签收凭证？",
+      "expected": "denied",
+      "actual": "denied",
+      "source_ids": []
+    },
+    {
+      "question": "咨询 SHOP-999 仓库回执？",
+      "expected": "denied",
+      "actual": "denied",
+      "source_ids": []
+    }
+  ],
+  "diagnostics": [
+    {
+      "query": "签收都八天了，还能让客服看一下吗？",
+      "dense_ids": [
+        "returns:2.0:1",
+        "returns:2.0:4",
+        "returns:2.0:10",
+        "returns:2.0:9",
+        "returns:2.0:3",
+        "returns:2.0:2",
+        "returns:2.0:8",
+        "returns:2.0:5",
+        "returns:2.0:7",
+        "blue-shop:1.0:1"
+      ],
+      "bm25": [
+        {
+          "source_id": "returns:2.0:1",
+          "score": -1.5202535390853882
+        },
+        {
+          "source_id": "returns:2.0:4",
+          "score": -1.4603006839752197
+        },
+        {
+          "source_id": "returns:2.0:8",
+          "score": -1.4238779544830322
+        },
+        {
+          "source_id": "returns:2.0:3",
+          "score": -1.3728477954864502
+        },
+        {
+          "source_id": "blue-shop:1.0:1",
+          "score": -1.2517424821853638
+        },
+        {
+          "source_id": "returns:2.0:2",
+          "score": -1.239274501800537
+        },
+        {
+          "source_id": "returns:2.0:6",
+          "score": -0.5370296239852905
+        },
+        {
+          "source_id": "returns:2.0:10",
+          "score": -0.5370296239852905
+        },
+        {
+          "source_id": "returns:2.0:5",
+          "score": -0.5065895318984985
+        },
+        {
+          "source_id": "returns:2.0:7",
+          "score": -0.3806295692920685
+        }
+      ],
+      "rrf_ids": [
+        "returns:2.0:1",
+        "returns:2.0:4",
+        "returns:2.0:3",
+        "returns:2.0:8",
+        "returns:2.0:10",
+        "returns:2.0:2",
+        "blue-shop:1.0:1",
+        "returns:2.0:5",
+        "returns:2.0:7",
+        "returns:2.0:9"
+      ],
+      "rerank": [
+        {
+          "source_id": "returns:2.0:4",
+          "score": -2.8362715244293213
+        },
+        {
+          "source_id": "returns:2.0:8",
+          "score": -2.8832380771636963
+        },
+        {
+          "source_id": "returns:2.0:1",
+          "score": -3.764518976211548
+        },
+        {
+          "source_id": "blue-shop:1.0:1",
+          "score": -4.006770133972168
+        },
+        {
+          "source_id": "returns:2.0:2",
+          "score": -4.503143310546875
+        },
+        {
+          "source_id": "returns:2.0:5",
+          "score": -4.5059099197387695
+        },
+        {
+          "source_id": "returns:2.0:10",
+          "score": -4.636815547943115
+        },
+        {
+          "source_id": "returns:2.0:7",
+          "score": -4.831074237823486
+        },
+        {
+          "source_id": "returns:2.0:9",
+          "score": -5.067203044891357
+        },
+        {
+          "source_id": "returns:2.0:3",
+          "score": -5.139127731323242
+        }
+      ]
+    },
+    {
+      "query": "已经签收八天，超过七天退货期限了，还能申请人工复核吗？",
+      "dense_ids": [
+        "returns:2.0:2",
+        "returns:2.0:1",
+        "returns:2.0:9",
+        "returns:2.0:6",
+        "returns:2.0:7",
+        "returns:2.0:8",
+        "returns:2.0:4",
+        "returns:2.0:10",
+        "returns:2.0:5",
+        "blue-shop:1.0:2"
+      ],
+      "bm25": [
+        {
+          "source_id": "returns:2.0:1",
+          "score": -8.443438529968262
+        },
+        {
+          "source_id": "returns:2.0:2",
+          "score": -8.32466983795166
+        },
+        {
+          "source_id": "returns:2.0:9",
+          "score": -5.133495330810547
+        },
+        {
+          "source_id": "returns:2.0:6",
+          "score": -3.6373865604400635
+        },
+        {
+          "source_id": "returns:2.0:4",
+          "score": -3.061006546020508
+        },
+        {
+          "source_id": "returns:2.0:8",
+          "score": -2.994016170501709
+        },
+        {
+          "source_id": "blue-shop:1.0:1",
+          "score": -2.271535873413086
+        },
+        {
+          "source_id": "returns:2.0:3",
+          "score": -1.8867191076278687
+        },
+        {
+          "source_id": "returns:2.0:7",
+          "score": -1.82448410987854
+        },
+        {
+          "source_id": "returns:2.0:10",
+          "score": -1.074059247970581
+        }
+      ],
+      "rrf_ids": [
+        "returns:2.0:1",
+        "returns:2.0:2",
+        "returns:2.0:9",
+        "returns:2.0:6",
+        "returns:2.0:4",
+        "returns:2.0:8",
+        "returns:2.0:7",
+        "returns:2.0:10",
+        "blue-shop:1.0:1",
+        "returns:2.0:3"
+      ],
+      "rerank": [
+        {
+          "source_id": "returns:2.0:2",
+          "score": 1.7095947265625
+        },
+        {
+          "source_id": "returns:2.0:1",
+          "score": -0.21392247080802917
+        },
+        {
+          "source_id": "returns:2.0:4",
+          "score": -1.765707015991211
+        },
+        {
+          "source_id": "returns:2.0:8",
+          "score": -2.9110589027404785
+        },
+        {
+          "source_id": "returns:2.0:6",
+          "score": -3.011009931564331
+        },
+        {
+          "source_id": "returns:2.0:9",
+          "score": -3.326249837875366
+        },
+        {
+          "source_id": "returns:2.0:7",
+          "score": -3.854402542114258
+        },
+        {
+          "source_id": "returns:2.0:10",
+          "score": -4.116146087646484
+        },
+        {
+          "source_id": "blue-shop:1.0:1",
+          "score": -4.734561443328857
+        },
+        {
+          "source_id": "returns:2.0:3",
+          "score": -5.040955543518066
+        }
+      ]
+    },
+    {
+      "query": "收到货八天了，现在想退货应该怎么办？",
+      "dense_ids": [
+        "returns:2.0:6",
+        "returns:2.0:7",
+        "returns:2.0:1",
+        "returns:2.0:2",
+        "returns:2.0:10",
+        "returns:2.0:9",
+        "returns:2.0:3",
+        "returns:2.0:4",
+        "returns:2.0:5",
+        "blue-shop:1.0:2"
+      ],
+      "bm25": [
+        {
+          "source_id": "returns:2.0:5",
+          "score": -3.958807945251465
+        },
+        {
+          "source_id": "returns:2.0:6",
+          "score": -2.0371320247650146
+        },
+        {
+          "source_id": "returns:2.0:2",
+          "score": -1.7747323513031006
+        },
+        {
+          "source_id": "returns:2.0:7",
+          "score": -1.443854570388794
+        },
+        {
+          "source_id": "returns:2.0:1",
+          "score": -1.2802783250808716
+        },
+        {
+          "source_id": "returns:2.0:4",
+          "score": -0.6013243794441223
+        },
+        {
+          "source_id": "returns:2.0:10",
+          "score": -0.5370296239852905
+        },
+        {
+          "source_id": "returns:2.0:8",
+          "score": -0.5290817022323608
+        },
+        {
+          "source_id": "returns:2.0:3",
+          "score": -0.5138713717460632
+        },
+        {
+          "source_id": "returns:2.0:9",
+          "score": -0.3507533073425293
+        }
+      ],
+      "rrf_ids": [
+        "returns:2.0:6",
+        "returns:2.0:7",
+        "returns:2.0:2",
+        "returns:2.0:1",
+        "returns:2.0:5",
+        "returns:2.0:10",
+        "returns:2.0:4",
+        "returns:2.0:9",
+        "returns:2.0:3",
+        "returns:2.0:8"
+      ],
+      "rerank": [
+        {
+          "source_id": "returns:2.0:1",
+          "score": 0.09712959080934525
+        },
+        {
+          "source_id": "returns:2.0:2",
+          "score": -0.13164249062538147
+        },
+        {
+          "source_id": "returns:2.0:6",
+          "score": -0.4709201753139496
+        },
+        {
+          "source_id": "returns:2.0:8",
+          "score": -1.8640514612197876
+        },
+        {
+          "source_id": "returns:2.0:7",
+          "score": -2.022028684616089
+        },
+        {
+          "source_id": "returns:2.0:3",
+          "score": -2.7484521865844727
+        },
+        {
+          "source_id": "returns:2.0:9",
+          "score": -3.2371857166290283
+        },
+        {
+          "source_id": "returns:2.0:5",
+          "score": -3.4175310134887695
+        },
+        {
+          "source_id": "returns:2.0:4",
+          "score": -3.509674310684204
+        },
+        {
+          "source_id": "returns:2.0:10",
+          "score": -7.221278667449951
+        }
+      ]
+    },
+    {
+      "query": "签收第九天才提出退货，是否可以登记人工核对？",
+      "dense_ids": [
+        "returns:2.0:2",
+        "returns:2.0:9",
+        "returns:2.0:1",
+        "returns:2.0:7",
+        "returns:2.0:6",
+        "returns:2.0:8",
+        "returns:2.0:4",
+        "blue-shop:1.0:1",
+        "returns:2.0:5",
+        "returns:2.0:10"
+      ],
+      "bm25": [
+        {
+          "source_id": "returns:2.0:2",
+          "score": -6.11496639251709
+        },
+        {
+          "source_id": "returns:2.0:8",
+          "score": -5.00469970703125
+        },
+        {
+          "source_id": "returns:2.0:9",
+          "score": -3.7207767963409424
+        },
+        {
+          "source_id": "blue-shop:1.0:1",
+          "score": -3.2913291454315186
+        },
+        {
+          "source_id": "returns:2.0:6",
+          "score": -3.1003570556640625
+        },
+        {
+          "source_id": "returns:2.0:7",
+          "score": -2.507079601287842
+        },
+        {
+          "source_id": "returns:2.0:1",
+          "score": -2.463024377822876
+        },
+        {
+          "source_id": "returns:2.0:4",
+          "score": -2.459681987762451
+        },
+        {
+          "source_id": "returns:2.0:5",
+          "score": -1.4863603115081787
+        },
+        {
+          "source_id": "returns:2.0:3",
+          "score": -1.3728477954864502
+        }
+      ],
+      "rrf_ids": [
+        "returns:2.0:2",
+        "returns:2.0:9",
+        "returns:2.0:8",
+        "returns:2.0:1",
+        "returns:2.0:7",
+        "returns:2.0:6",
+        "blue-shop:1.0:1",
+        "returns:2.0:4",
+        "returns:2.0:5",
+        "returns:2.0:3"
+      ],
+      "rerank": [
+        {
+          "source_id": "returns:2.0:2",
+          "score": 1.9580035209655762
+        },
+        {
+          "source_id": "returns:2.0:4",
+          "score": 0.2991971969604492
+        },
+        {
+          "source_id": "returns:2.0:9",
+          "score": 0.28698980808258057
+        },
+        {
+          "source_id": "returns:2.0:8",
+          "score": -0.035977672785520554
+        },
+        {
+          "source_id": "returns:2.0:1",
+          "score": -1.0318365097045898
+        },
+        {
+          "source_id": "returns:2.0:6",
+          "score": -1.060953140258789
+        },
+        {
+          "source_id": "blue-shop:1.0:1",
+          "score": -1.1655616760253906
+        },
+        {
+          "source_id": "returns:2.0:7",
+          "score": -3.05721378326416
+        },
+        {
+          "source_id": "returns:2.0:5",
+          "score": -3.6503241062164307
+        },
+        {
+          "source_id": "returns:2.0:3",
+          "score": -4.267904758453369
+        }
+      ]
+    },
+    {
+      "query": "签收十天错过退货期限，需要哪些人工审核材料？",
+      "dense_ids": [
+        "returns:2.0:2",
+        "returns:2.0:1",
+        "returns:2.0:8",
+        "returns:2.0:6",
+        "returns:2.0:4",
+        "returns:2.0:7",
+        "returns:2.0:9",
+        "returns:2.0:5",
+        "blue-shop:1.0:2",
+        "blue-shop:1.0:1"
+      ],
+      "bm25": [
+        {
+          "source_id": "returns:2.0:2",
+          "score": -4.885153293609619
+        },
+        {
+          "source_id": "returns:2.0:1",
+          "score": -4.290200710296631
+        },
+        {
+          "source_id": "returns:2.0:8",
+          "score": -4.138696670532227
+        },
+        {
+          "source_id": "returns:2.0:6",
+          "score": -3.1003570556640625
+        },
+        {
+          "source_id": "returns:2.0:4",
+          "score": -2.459681987762451
+        },
+        {
+          "source_id": "blue-shop:1.0:1",
+          "score": -2.271535873413086
+        },
+        {
+          "source_id": "returns:2.0:7",
+          "score": -1.443854570388794
+        },
+        {
+          "source_id": "returns:2.0:3",
+          "score": -1.3728477954864502
+        },
+        {
+          "source_id": "returns:2.0:9",
+          "score": -1.33052396774292
+        },
+        {
+          "source_id": "returns:2.0:10",
+          "score": -0.5370296239852905
+        }
+      ],
+      "rrf_ids": [
+        "returns:2.0:2",
+        "returns:2.0:1",
+        "returns:2.0:8",
+        "returns:2.0:6",
+        "returns:2.0:4",
+        "returns:2.0:7",
+        "blue-shop:1.0:1",
+        "returns:2.0:9",
+        "returns:2.0:3",
+        "returns:2.0:5"
+      ],
+      "rerank": [
+        {
+          "source_id": "returns:2.0:2",
+          "score": 0.8310117721557617
+        },
+        {
+          "source_id": "returns:2.0:8",
+          "score": 0.15520265698432922
+        },
+        {
+          "source_id": "returns:2.0:4",
+          "score": -0.4597136080265045
+        },
+        {
+          "source_id": "blue-shop:1.0:1",
+          "score": -1.1045995950698853
+        },
+        {
+          "source_id": "returns:2.0:1",
+          "score": -1.3033109903335571
+        },
+        {
+          "source_id": "returns:2.0:6",
+          "score": -2.2670552730560303
+        },
+        {
+          "source_id": "returns:2.0:7",
+          "score": -2.66814923286438
+        },
+        {
+          "source_id": "returns:2.0:9",
+          "score": -2.760823965072632
+        },
+        {
+          "source_id": "returns:2.0:3",
+          "score": -2.9468746185302734
+        },
+        {
+          "source_id": "returns:2.0:5",
+          "score": -4.478579521179199
+        }
+      ]
+    },
+    {
+      "query": "示例商家的退货申请期限是不是签收后七天？",
+      "dense_ids": [
+        "returns:2.0:1",
+        "returns:2.0:2",
+        "returns:2.0:7",
+        "returns:2.0:9",
+        "returns:2.0:6",
+        "returns:2.0:5",
+        "blue-shop:1.0:2",
+        "returns:2.0:8",
+        "returns:2.0:10",
+        "returns:2.0:4"
+      ],
+      "bm25": [
+        {
+          "source_id": "returns:2.0:1",
+          "score": -13.226500511169434
+        },
+        {
+          "source_id": "returns:2.0:2",
+          "score": -6.1644673347473145
+        },
+        {
+          "source_id": "returns:2.0:6",
+          "score": -4.010398864746094
+        },
+        {
+          "source_id": "blue-shop:1.0:1",
+          "score": -3.6594958305358887
+        },
+        {
+          "source_id": "returns:2.0:4",
+          "score": -2.2191553115844727
+        },
+        {
+          "source_id": "returns:2.0:9",
+          "score": -1.5752297639846802
+        },
+        {
+          "source_id": "blue-shop:1.0:2",
+          "score": -1.110520601272583
+        },
+        {
+          "source_id": "returns:2.0:7",
+          "score": -1.0632250308990479
+        },
+        {
+          "source_id": "returns:2.0:5",
+          "score": -0.9797707200050354
+        },
+        {
+          "source_id": "returns:2.0:8",
+          "score": -0.8947963118553162
+        }
+      ],
+      "rrf_ids": [
+        "returns:2.0:1",
+        "returns:2.0:2",
+        "returns:2.0:6",
+        "returns:2.0:9",
+        "returns:2.0:7",
+        "blue-shop:1.0:2",
+        "returns:2.0:4",
+        "returns:2.0:5",
+        "returns:2.0:8",
+        "blue-shop:1.0:1"
+      ],
+      "rerank": [
+        {
+          "source_id": "returns:2.0:1",
+          "score": 6.883467674255371
+        },
+        {
+          "source_id": "returns:2.0:2",
+          "score": -0.46094051003456116
+        },
+        {
+          "source_id": "returns:2.0:4",
+          "score": -2.7853896617889404
+        },
+        {
+          "source_id": "returns:2.0:7",
+          "score": -2.9158902168273926
+        },
+        {
+          "source_id": "returns:2.0:9",
+          "score": -3.5557310581207275
+        },
+        {
+          "source_id": "returns:2.0:8",
+          "score": -3.9024276733398438
+        },
+        {
+          "source_id": "returns:2.0:6",
+          "score": -4.101604461669922
+        },
+        {
+          "source_id": "blue-shop:1.0:1",
+          "score": -6.084559917449951
+        },
+        {
+          "source_id": "blue-shop:1.0:2",
+          "score": -6.176442623138428
+        },
+        {
+          "source_id": "returns:2.0:5",
+          "score": -6.962203025817871
+        }
+      ]
+    },
+    {
+      "query": "收货第二天想申请退货，示例申请期限如何计算？",
+      "dense_ids": [
+        "returns:2.0:1",
+        "returns:2.0:2",
+        "returns:2.0:7",
+        "returns:2.0:6",
+        "returns:2.0:9",
+        "blue-shop:1.0:2",
+        "returns:2.0:5",
+        "returns:2.0:10",
+        "returns:2.0:3",
+        "returns:2.0:4"
+      ],
+      "bm25": [
+        {
+          "source_id": "returns:2.0:1",
+          "score": -7.4220709800720215
+        },
+        {
+          "source_id": "returns:2.0:2",
+          "score": -5.995782852172852
+        },
+        {
+          "source_id": "returns:2.0:6",
+          "score": -2.0371320247650146
+        },
+        {
+          "source_id": "returns:2.0:7",
+          "score": -1.443854570388794
+        },
+        {
+          "source_id": "returns:2.0:4",
+          "score": -0.6013243794441223
+        },
+        {
+          "source_id": "returns:2.0:10",
+          "score": -0.5370296239852905
+        },
+        {
+          "source_id": "returns:2.0:8",
+          "score": -0.5290817022323608
+        },
+        {
+          "source_id": "returns:2.0:3",
+          "score": -0.5138713717460632
+        },
+        {
+          "source_id": "returns:2.0:5",
+          "score": -0.5065895318984985
+        },
+        {
+          "source_id": "returns:2.0:9",
+          "score": -0.3507533073425293
+        }
+      ],
+      "rrf_ids": [
+        "returns:2.0:1",
+        "returns:2.0:2",
+        "returns:2.0:6",
+        "returns:2.0:7",
+        "returns:2.0:10",
+        "returns:2.0:4",
+        "returns:2.0:9",
+        "returns:2.0:5",
+        "returns:2.0:3",
+        "blue-shop:1.0:2"
+      ],
+      "rerank": [
+        {
+          "source_id": "returns:2.0:1",
+          "score": 4.0872626304626465
+        },
+        {
+          "source_id": "returns:2.0:2",
+          "score": -1.953429102897644
+        },
+        {
+          "source_id": "returns:2.0:6",
+          "score": -3.1547069549560547
+        },
+        {
+          "source_id": "returns:2.0:7",
+          "score": -3.3486533164978027
+        },
+        {
+          "source_id": "returns:2.0:4",
+          "score": -4.703263282775879
+        },
+        {
+          "source_id": "returns:2.0:3",
+          "score": -4.777493476867676
+        },
+        {
+          "source_id": "returns:2.0:9",
+          "score": -5.013095855712891
+        },
+        {
+          "source_id": "returns:2.0:5",
+          "score": -5.851685047149658
+        },
+        {
+          "source_id": "blue-shop:1.0:2",
+          "score": -6.690742492675781
+        },
+        {
+          "source_id": "returns:2.0:10",
+          "score": -6.794426918029785
+        }
+      ]
+    },
+    {
+      "query": "下单八天还没签收，怀疑包裹丢失，应先查什么？",
+      "dense_ids": [
+        "returns:2.0:3",
+        "returns:2.0:4",
+        "returns:2.0:8",
+        "blue-shop:1.0:2",
+        "returns:2.0:5",
+        "returns:2.0:7",
+        "returns:2.0:10",
+        "returns:2.0:6",
+        "returns:2.0:2",
+        "blue-shop:1.0:1"
+      ],
+      "bm25": [
+        {
+          "source_id": "returns:2.0:3",
+          "score": -6.762909412384033
+        },
+        {
+          "source_id": "returns:2.0:4",
+          "score": -2.0616250038146973
+        },
+        {
+          "source_id": "returns:2.0:8",
+          "score": -1.9529597759246826
+        },
+        {
+          "source_id": "returns:2.0:1",
+          "score": -1.8577611446380615
+        },
+        {
+          "source_id": "returns:2.0:2",
+          "score": -1.7745697498321533
+        },
+        {
+          "source_id": "blue-shop:1.0:1",
+          "score": -1.2517424821853638
+        },
+        {
+          "source_id": "returns:2.0:6",
+          "score": -1.074059247970581
+        },
+        {
+          "source_id": "returns:2.0:10",
+          "score": -1.074059247970581
+        },
+        {
+          "source_id": "returns:2.0:5",
+          "score": -1.013179063796997
+        },
+        {
+          "source_id": "returns:2.0:7",
+          "score": -0.761259138584137
+        }
+      ],
+      "rrf_ids": [
+        "returns:2.0:3",
+        "returns:2.0:4",
+        "returns:2.0:8",
+        "returns:2.0:2",
+        "returns:2.0:5",
+        "returns:2.0:6",
+        "returns:2.0:10",
+        "returns:2.0:7",
+        "blue-shop:1.0:1",
+        "returns:2.0:1"
+      ],
+      "rerank": [
+        {
+          "source_id": "returns:2.0:3",
+          "score": 4.4519524574279785
+        },
+        {
+          "source_id": "returns:2.0:8",
+          "score": 0.2521400451660156
+        },
+        {
+          "source_id": "returns:2.0:7",
+          "score": -1.2668464183807373
+        },
+        {
+          "source_id": "returns:2.0:4",
+          "score": -1.6739109754562378
+        },
+        {
+          "source_id": "blue-shop:1.0:1",
+          "score": -2.1205153465270996
+        },
+        {
+          "source_id": "returns:2.0:10",
+          "score": -3.206420660018921
+        },
+        {
+          "source_id": "returns:2.0:2",
+          "score": -3.2292511463165283
+        },
+        {
+          "source_id": "returns:2.0:1",
+          "score": -3.536367416381836
+        },
+        {
+          "source_id": "returns:2.0:5",
+          "score": -3.8662819862365723
+        },
+        {
+          "source_id": "returns:2.0:6",
+          "score": -4.920106410980225
+        }
+      ]
+    },
+    {
+      "query": "快递在路上九天了还未收货，如何登记物流异常？",
+      "dense_ids": [
+        "returns:2.0:3",
+        "returns:2.0:7",
+        "returns:2.0:8",
+        "returns:2.0:1",
+        "returns:2.0:6",
+        "returns:2.0:2",
+        "returns:2.0:5",
+        "returns:2.0:4",
+        "returns:2.0:9",
+        "returns:2.0:10"
+      ],
+      "bm25": [
+        {
+          "source_id": "returns:2.0:3",
+          "score": -6.323504447937012
+        },
+        {
+          "source_id": "returns:2.0:9",
+          "score": -2.7410061359405518
+        },
+        {
+          "source_id": "returns:2.0:8",
+          "score": -2.20284366607666
+        },
+        {
+          "source_id": "returns:2.0:1",
+          "score": -2.1646835803985596
+        },
+        {
+          "source_id": "blue-shop:1.0:2",
+          "score": -2.1522905826568604
+        },
+        {
+          "source_id": "returns:2.0:7",
+          "score": -2.0900332927703857
+        },
+        {
+          "source_id": "returns:2.0:4",
+          "score": -0.6013243794441223
+        },
+        {
+          "source_id": "returns:2.0:6",
+          "score": -0.5370296239852905
+        },
+        {
+          "source_id": "returns:2.0:10",
+          "score": -0.5370296239852905
+        },
+        {
+          "source_id": "returns:2.0:2",
+          "score": -0.5352951884269714
+        }
+      ],
+      "rrf_ids": [
+        "returns:2.0:3",
+        "returns:2.0:8",
+        "returns:2.0:7",
+        "returns:2.0:1",
+        "returns:2.0:9",
+        "returns:2.0:6",
+        "returns:2.0:4",
+        "returns:2.0:2",
+        "returns:2.0:10",
+        "blue-shop:1.0:2"
+      ],
+      "rerank": [
+        {
+          "source_id": "returns:2.0:3",
+          "score": 1.8441271781921387
+        },
+        {
+          "source_id": "returns:2.0:8",
+          "score": -1.2355682849884033
+        },
+        {
+          "source_id": "returns:2.0:7",
+          "score": -2.1125733852386475
+        },
+        {
+          "source_id": "returns:2.0:6",
+          "score": -3.695253610610962
+        },
+        {
+          "source_id": "returns:2.0:1",
+          "score": -3.829990863800049
+        },
+        {
+          "source_id": "returns:2.0:9",
+          "score": -4.108466148376465
+        },
+        {
+          "source_id": "returns:2.0:4",
+          "score": -4.577174186706543
+        },
+        {
+          "source_id": "returns:2.0:2",
+          "score": -4.757345199584961
+        },
+        {
+          "source_id": "blue-shop:1.0:2",
+          "score": -5.574075222015381
+        },
+        {
+          "source_id": "returns:2.0:10",
+          "score": -5.746458530426025
+        }
+      ]
+    },
+    {
+      "query": "今天刚签收，打开包装发现碎了，要拍哪些照片？",
+      "dense_ids": [
+        "returns:2.0:4",
+        "returns:2.0:5",
+        "returns:2.0:3",
+        "returns:2.0:8",
+        "blue-shop:1.0:1",
+        "blue-shop:1.0:2",
+        "returns:2.0:1",
+        "returns:2.0:10",
+        "returns:2.0:2",
+        "returns:2.0:6"
+      ],
+      "bm25": [
+        {
+          "source_id": "returns:2.0:4",
+          "score": -8.87470817565918
+        },
+        {
+          "source_id": "returns:2.0:5",
+          "score": -2.91206431388855
+        },
+        {
+          "source_id": "returns:2.0:8",
+          "score": -1.9529597759246826
+        },
+        {
+          "source_id": "returns:2.0:3",
+          "score": -1.8867191076278687
+        },
+        {
+          "source_id": "returns:2.0:1",
+          "score": -1.8577611446380615
+        },
+        {
+          "source_id": "returns:2.0:2",
+          "score": -1.7745697498321533
+        },
+        {
+          "source_id": "blue-shop:1.0:1",
+          "score": -1.2517424821853638
+        },
+        {
+          "source_id": "returns:2.0:6",
+          "score": -1.074059247970581
+        },
+        {
+          "source_id": "returns:2.0:10",
+          "score": -1.074059247970581
+        },
+        {
+          "source_id": "returns:2.0:7",
+          "score": -0.761259138584137
+        }
+      ],
+      "rrf_ids": [
+        "returns:2.0:4",
+        "returns:2.0:5",
+        "returns:2.0:3",
+        "returns:2.0:8",
+        "returns:2.0:1",
+        "blue-shop:1.0:1",
+        "returns:2.0:2",
+        "returns:2.0:10",
+        "returns:2.0:6",
+        "blue-shop:1.0:2"
+      ],
+      "rerank": [
+        {
+          "source_id": "returns:2.0:4",
+          "score": 4.899596214294434
+        },
+        {
+          "source_id": "blue-shop:1.0:1",
+          "score": -2.06648850440979
+        },
+        {
+          "source_id": "returns:2.0:8",
+          "score": -2.256491184234619
+        },
+        {
+          "source_id": "returns:2.0:5",
+          "score": -2.7866201400756836
+        },
+        {
+          "source_id": "returns:2.0:3",
+          "score": -3.545825958251953
+        },
+        {
+          "source_id": "returns:2.0:1",
+          "score": -6.34635591506958
+        },
+        {
+          "source_id": "blue-shop:1.0:2",
+          "score": -6.712536811828613
+        },
+        {
+          "source_id": "returns:2.0:2",
+          "score": -7.225241184234619
+        },
+        {
+          "source_id": "returns:2.0:6",
+          "score": -8.495482444763184
+        },
+        {
+          "source_id": "returns:2.0:10",
+          "score": -9.634612083435059
+        }
+      ]
+    },
+    {
+      "query": "签收第二天发现商品外壳破损，如何提供核验材料？",
+      "dense_ids": [
+        "returns:2.0:4",
+        "returns:2.0:8",
+        "returns:2.0:5",
+        "returns:2.0:3",
+        "blue-shop:1.0:1",
+        "returns:2.0:2",
+        "returns:2.0:7",
+        "returns:2.0:10",
+        "blue-shop:1.0:2",
+        "returns:2.0:1"
+      ],
+      "bm25": [
+        {
+          "source_id": "returns:2.0:4",
+          "score": -11.445091247558594
+        },
+        {
+          "source_id": "returns:2.0:2",
+          "score": -2.826666831970215
+        },
+        {
+          "source_id": "returns:2.0:5",
+          "score": -2.7816781997680664
+        },
+        {
+          "source_id": "returns:2.0:6",
+          "score": -2.5976572036743164
+        },
+        {
+          "source_id": "blue-shop:1.0:2",
+          "score": -1.7854434251785278
+        },
+        {
+          "source_id": "returns:2.0:1",
+          "score": -1.5202535390853882
+        },
+        {
+          "source_id": "returns:2.0:8",
+          "score": -1.4238779544830322
+        },
+        {
+          "source_id": "returns:2.0:3",
+          "score": -1.3728477954864502
+        },
+        {
+          "source_id": "blue-shop:1.0:1",
+          "score": -1.2517424821853638
+        },
+        {
+          "source_id": "returns:2.0:10",
+          "score": -0.5370296239852905
+        }
+      ],
+      "rrf_ids": [
+        "returns:2.0:4",
+        "returns:2.0:5",
+        "returns:2.0:2",
+        "returns:2.0:8",
+        "returns:2.0:3",
+        "blue-shop:1.0:1",
+        "blue-shop:1.0:2",
+        "returns:2.0:1",
+        "returns:2.0:10",
+        "returns:2.0:6"
+      ],
+      "rerank": [
+        {
+          "source_id": "returns:2.0:4",
+          "score": 5.193137168884277
+        },
+        {
+          "source_id": "returns:2.0:8",
+          "score": -0.7706483602523804
+        },
+        {
+          "source_id": "blue-shop:1.0:1",
+          "score": -2.5931479930877686
+        },
+        {
+          "source_id": "returns:2.0:3",
+          "score": -3.2599728107452393
+        },
+        {
+          "source_id": "returns:2.0:5",
+          "score": -3.975919723510742
+        },
+        {
+          "source_id": "returns:2.0:2",
+          "score": -4.6077375411987305
+        },
+        {
+          "source_id": "blue-shop:1.0:2",
+          "score": -5.706536769866943
+        },
+        {
+          "source_id": "returns:2.0:6",
+          "score": -5.766548156738281
+        },
+        {
+          "source_id": "returns:2.0:1",
+          "score": -5.849699974060059
+        },
+        {
+          "source_id": "returns:2.0:10",
+          "score": -6.475042819976807
+        }
+      ]
+    },
+    {
+      "query": "超过退货期限，同时丢了签收凭证，能提供哪些替代材料并申请复核？",
+      "dense_ids": [
+        "returns:2.0:2",
+        "returns:2.0:8",
+        "returns:2.0:6",
+        "returns:2.0:1",
+        "returns:2.0:7",
+        "returns:2.0:5",
+        "returns:2.0:4",
+        "blue-shop:1.0:1",
+        "returns:2.0:9",
+        "blue-shop:1.0:2"
+      ],
+      "bm25": [
+        {
+          "source_id": "returns:2.0:2",
+          "score": -11.524585723876953
+        },
+        {
+          "source_id": "returns:2.0:6",
+          "score": -6.3441925048828125
+        },
+        {
+          "source_id": "returns:2.0:1",
+          "score": -6.143450736999512
+        },
+        {
+          "source_id": "returns:2.0:4",
+          "score": -3.668384075164795
+        },
+        {
+          "source_id": "returns:2.0:8",
+          "score": -3.369859218597412
+        },
+        {
+          "source_id": "blue-shop:1.0:1",
+          "score": -2.639702320098877
+        },
+        {
+          "source_id": "returns:2.0:3",
+          "score": -1.8867191076278687
+        },
+        {
+          "source_id": "returns:2.0:7",
+          "score": -1.82448410987854
+        },
+        {
+          "source_id": "returns:2.0:10",
+          "score": -1.074059247970581
+        },
+        {
+          "source_id": "returns:2.0:5",
+          "score": -1.013179063796997
+        }
+      ],
+      "rrf_ids": [
+        "returns:2.0:2",
+        "returns:2.0:6",
+        "returns:2.0:8",
+        "returns:2.0:1",
+        "returns:2.0:4",
+        "returns:2.0:7",
+        "blue-shop:1.0:1",
+        "returns:2.0:5",
+        "returns:2.0:3",
+        "returns:2.0:9"
+      ],
+      "rerank": [
+        {
+          "source_id": "returns:2.0:8",
+          "score": 2.8092458248138428
+        },
+        {
+          "source_id": "returns:2.0:2",
+          "score": 2.242633819580078
+        },
+        {
+          "source_id": "returns:2.0:4",
+          "score": -1.3128043413162231
+        },
+        {
+          "source_id": "returns:2.0:3",
+          "score": -2.1879873275756836
+        },
+        {
+          "source_id": "returns:2.0:1",
+          "score": -2.3526012897491455
+        },
+        {
+          "source_id": "blue-shop:1.0:1",
+          "score": -2.6776528358459473
+        },
+        {
+          "source_id": "returns:2.0:7",
+          "score": -4.019876480102539
+        },
+        {
+          "source_id": "returns:2.0:6",
+          "score": -4.297853946685791
+        },
+        {
+          "source_id": "returns:2.0:9",
+          "score": -6.2035298347473145
+        },
+        {
+          "source_id": "returns:2.0:5",
+          "score": -6.236538887023926
+        }
+      ]
+    },
+    {
+      "query": "工单等了八天还是待人工受理，是否代表已退款？",
+      "dense_ids": [
+        "returns:2.0:9",
+        "returns:2.0:2",
+        "returns:2.0:6",
+        "returns:2.0:1",
+        "returns:2.0:7",
+        "blue-shop:1.0:2",
+        "returns:2.0:8",
+        "returns:2.0:10",
+        "returns:2.0:4",
+        "returns:2.0:5"
+      ],
+      "bm25": [
+        {
+          "source_id": "returns:2.0:9",
+          "score": -10.400167465209961
+        },
+        {
+          "source_id": "returns:2.0:2",
+          "score": -4.628636360168457
+        },
+        {
+          "source_id": "returns:2.0:8",
+          "score": -4.109903812408447
+        },
+        {
+          "source_id": "returns:2.0:10",
+          "score": -4.0447282791137695
+        },
+        {
+          "source_id": "returns:2.0:7",
+          "score": -2.4412569999694824
+        },
+        {
+          "source_id": "returns:2.0:4",
+          "score": -1.600705862045288
+        },
+        {
+          "source_id": "returns:2.0:6",
+          "score": -1.6002546548843384
+        },
+        {
+          "source_id": "blue-shop:1.0:2",
+          "score": -1.511441707611084
+        },
+        {
+          "source_id": "blue-shop:1.0:1",
+          "score": -1.0197932720184326
+        },
+        {
+          "source_id": "returns:2.0:3",
+          "score": -0.5138713717460632
+        }
+      ],
+      "rrf_ids": [
+        "returns:2.0:9",
+        "returns:2.0:2",
+        "returns:2.0:6",
+        "returns:2.0:8",
+        "returns:2.0:7",
+        "returns:2.0:10",
+        "blue-shop:1.0:2",
+        "returns:2.0:4",
+        "returns:2.0:1",
+        "blue-shop:1.0:1"
+      ],
+      "rerank": [
+        {
+          "source_id": "returns:2.0:9",
+          "score": 5.5342488288879395
+        },
+        {
+          "source_id": "returns:2.0:2",
+          "score": 0.3493506908416748
+        },
+        {
+          "source_id": "returns:2.0:6",
+          "score": -1.3727366924285889
+        },
+        {
+          "source_id": "returns:2.0:7",
+          "score": -2.5812034606933594
+        },
+        {
+          "source_id": "returns:2.0:1",
+          "score": -3.000509262084961
+        },
+        {
+          "source_id": "returns:2.0:10",
+          "score": -4.679055690765381
+        },
+        {
+          "source_id": "returns:2.0:8",
+          "score": -5.024707317352295
+        },
+        {
+          "source_id": "returns:2.0:4",
+          "score": -5.756857872009277
+        },
+        {
+          "source_id": "blue-shop:1.0:2",
+          "score": -6.722020149230957
+        },
+        {
+          "source_id": "blue-shop:1.0:1",
+          "score": -7.337195873260498
+        }
+      ]
+    }
+  ],
+  "heading_rerank_experiment_not_applied": {
+    "original": {
+      "queries": 24,
+      "recall_at_5": 1.0,
+      "hit_at_1": 22,
+      "misses": [
+        {
+          "query": "签收都八天了，还能让客服看一下吗？",
+          "first": "returns:2.0:8"
+        },
+        {
+          "query": "下单大号却送了小号，提供什么信息给客服？",
+          "first": "returns:2.0:8"
+        }
+      ]
+    },
+    "probes": {
+      "queries": 12,
+      "recall_at_5": 1.0,
+      "hit_at_1": 11,
+      "misses": [
+        {
+          "query": "收到货八天了，现在想退货应该怎么办？",
+          "first": "returns:2.0:1"
+        }
+      ]
+    }
+  },
+  "http": {
+    "rag_response": {
+      "n": 10,
+      "p50_ms": 727.02,
+      "p95_ms": 794.94
+    },
+    "order_response_alone": {
+      "n": 10,
+      "p50_ms": 6.39,
+      "p95_ms": 17.87
+    },
+    "order_response_while_other_session_reranks": {
+      "n": 5,
+      "p50_ms": 690.02,
+      "p95_ms": 731.34
+    },
+    "five_request_journey_ms": 714.17,
+    "database_counts": {
+      "support_tickets": 1,
+      "ticket_orders": 1,
+      "operation_receipts": 1
+    },
+    "source_id": "returns:2.0:2",
+    "scope": "warm models, real localhost TCP, synthetic SQLite, no user think time or LLM"
+  },
+  "models_load_s": 2.538,
+  "peak_rss_bytes_macos": 930824192,
+  "candidate_width_p50_ms": {
+    "3": 226.25,
+    "5": 355.01,
+    "10": 769.19
+  }
+}
